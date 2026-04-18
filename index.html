@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Roulette Tracker Advanced V4</title>
+  <title>Roulette Tracker Advanced V5</title>
   <style>
     :root{
       --bg:#f8fafc; --card:#ffffff; --text:#0f172a; --muted:#64748b; --line:#e2e8f0;
@@ -89,12 +89,13 @@
       .title{font-size:22px}
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <div class="wrap">
     <div class="card">
       <div class="row" style="margin-bottom:12px;">
-        <div class="title">Roulette Tracker Advanced V4</div>
+        <div class="title">Roulette Tracker Advanced V5</div>
         <div id="statusBadge" class="badge b-normal">Normal</div>
       </div>
 
@@ -226,6 +227,12 @@
       </div>
     </div>
 
+
+    <div class="card">
+      <div class="section-title">Session Graph</div>
+      <canvas id="bankrollChart" height="180"></canvas>
+    </div>
+
     <div class="card">
       <div class="section-title">Spin Log</div>
       <div id="spinLog" class="log"></div>
@@ -343,6 +350,7 @@ function updateUI(){
   renderSpinLog();
   renderSessionHistory();
   renderStats();
+  updateChart();
   saveState();
 }
 function renderSpinLog(){
@@ -532,8 +540,80 @@ function finishAndSaveSession(){
   document.getElementById("sessionNameInput").value = "";
   updateUI();
 }
+
+let bankrollChart;
+
+function getChartPoints(){
+  const points = [{ x: 0, y: round2(state.startingBankroll) }];
+  const ordered = state.spins.slice().reverse();
+  ordered.forEach((spin, idx) => {
+    points.push({ x: idx + 1, y: round2(spin.bankrollAfter) });
+  });
+  return points;
+}
+
+function initChart(){
+  const canvas = document.getElementById("bankrollChart");
+  if(!canvas) return;
+  const ctx = canvas.getContext("2d");
+  bankrollChart = new Chart(ctx, {
+    type: "line",
+    data: {
+      datasets: [{
+        label: "Bankroll",
+        data: getChartPoints(),
+        borderColor: "#2563eb",
+        backgroundColor: "rgba(37,99,235,0.12)",
+        borderWidth: 3,
+        pointRadius: 3,
+        pointHoverRadius: 4,
+        fill: true,
+        tension: 0.25
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(context){
+              return "Bankroll: " + fmt(context.parsed.y);
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          type: "linear",
+          title: { display: true, text: "Spin" },
+          ticks: { precision: 0, color: "#64748b" },
+          grid: { color: "#e2e8f0" }
+        },
+        y: {
+          title: { display: true, text: "Bankroll" },
+          ticks: {
+            color: "#64748b",
+            callback: function(value){ return fmt(value); }
+          },
+          grid: { color: "#e2e8f0" }
+        }
+      }
+    }
+  });
+}
+
+function updateChart(){
+  if(!bankrollChart) return;
+  bankrollChart.data.datasets[0].data = getChartPoints();
+  bankrollChart.update();
+}
+
 loadState();
 updateUI();
+initChart();
+updateChart();
 </script>
 </body>
 </html>
