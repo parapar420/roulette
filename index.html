@@ -1,26 +1,27 @@
 
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Roulette Tracker Advanced V5</title>
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Roulette Tracker Advanced V15 Dark</title>
+<style>
     :root{
-      --bg:#f8fafc; --card:#ffffff; --text:#0f172a; --muted:#64748b; --line:#e2e8f0;
-      --green:#16a34a; --green-bg:#dcfce7; --red:#dc2626; --red-bg:#fee2e2;
-      --amber:#d97706; --amber-bg:#fef3c7; --blue:#2563eb; --blue-bg:#dbeafe;
-      --slate:#334155; --slate-bg:#f1f5f9;
+      --bg:#0b1220; --card:#0f172a; --text:#f8fafc; --muted:#94a3b8; --line:#22304a;
+      --green:#22c55e; --green-bg:#052e16; --red:#ef4444; --red-bg:#3b0a0a;
+      --amber:#f59e0b; --amber-bg:#3a2605; --blue:#60a5fa; --blue-bg:#0b2545;
+      --slate:#cbd5e1; --slate-bg:#172033;
     }
     *{box-sizing:border-box}
     body{
       margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-      background:var(--bg); color:var(--text);
+      background:linear-gradient(180deg,#0b1220 0%, #0f172a 100%); color:var(--text);
     }
     .wrap{max-width:680px; margin:0 auto; padding:16px 14px 40px;}
     .card{
       background:var(--card); border:1px solid var(--line); border-radius:22px;
-      box-shadow:0 1px 2px rgba(0,0,0,.03); padding:16px; margin-bottom:14px;
+      box-shadow:0 10px 30px rgba(0,0,0,.35); padding:16px; margin-bottom:14px;
     }
     .row{display:flex; gap:10px; align-items:center; justify-content:space-between;}
     .title{font-size:24px; font-weight:800; letter-spacing:-.02em}
@@ -30,7 +31,7 @@
     .b-normal{background:var(--blue-bg); color:var(--blue)}
     .b-watch{background:var(--amber-bg); color:var(--amber)}
     .b-danger{background:var(--red-bg); color:var(--red)}
-    .b-recovery{background:#fff7ed; color:#c2410c}
+    .b-recovery{background:#422006; color:#fdba74}
     .b-target{background:var(--green-bg); color:var(--green)}
     .b-locked{background:#dcfce7; color:#166534}
     .grid2,.grid3,.grid4{display:grid; gap:10px}
@@ -38,7 +39,7 @@
     .grid3{grid-template-columns:repeat(3,1fr)}
     .grid4{grid-template-columns:repeat(4,1fr)}
     .stat{
-      background:#fff; border:1px solid var(--line); border-radius:18px; padding:12px;
+      background:#111b31; border:1px solid var(--line); border-radius:18px; padding:12px;
     }
     .label{font-size:12px; color:var(--muted); margin-bottom:6px}
     .value{font-size:28px; font-weight:800; letter-spacing:-.03em}
@@ -49,33 +50,33 @@
       appearance:none; border:none; border-radius:18px; padding:14px 14px; font-size:16px; font-weight:800;
       cursor:pointer; width:100%;
     }
-    .btn-dozen{background:#e0f2fe; color:#075985}
-    .btn-street{background:#ecfccb; color:#3f6212}
-    .btn-miss{background:#fee2e2; color:#991b1b}
-    .btn-secondary{background:#e2e8f0; color:#0f172a}
-    .btn-outline{background:#fff; color:#0f172a; border:1px solid var(--line)}
-    .btn-ghost{background:#f8fafc; color:#334155; border:1px dashed var(--line)}
-    .btn-danger{background:#fff1f2; color:#be123c; border:1px solid #fecdd3}
+    .btn-dozen{background:#155e85; color:#e0f2fe}
+    .btn-street{background:#3f6212; color:#ecfccb}
+    .btn-miss{background:#991b1b; color:#fee2e2}
+    .btn-secondary{background:#475569; color:#f8fafc}
+    .btn-outline{background:#0f172a; color:#f8fafc; border:1px solid var(--line)}
+    .btn-ghost{background:#0f172a; color:#cbd5e1; border:1px dashed var(--line)}
+    .btn-danger{background:#7a062d; color:#ffe4e6; border:1px solid #be123c}
     input{
       width:100%; border:1px solid var(--line); border-radius:14px; padding:12px; font-size:16px;
-      background:#fff;
+      background:#0f172a;
     }
     .note{
       border-radius:18px; padding:12px; font-size:14px; line-height:1.35; border:1px solid var(--line);
     }
-    .note.green{background:#f0fdf4; border-color:#bbf7d0; color:#166534}
-    .note.amber{background:#fffbeb; border-color:#fde68a; color:#92400e}
-    .note.blue{background:#eff6ff; border-color:#bfdbfe; color:#1d4ed8}
+    .note.green{background:#052e16; border-color:#14532d; color:#86efac}
+    .note.amber{background:#3a2a05; border-color:#854d0e; color:#fcd34d}
+    .note.blue{background:#0b2545; border-color:#1d4ed8; color:#93c5fd}
     .section-title{font-size:18px; font-weight:800; margin-bottom:10px}
     .log{
       max-height:380px; overflow:auto; display:flex; flex-direction:column; gap:10px;
     }
     .log-item{
-      border:1px solid var(--line); border-radius:18px; padding:12px; background:#fff;
+      border:1px solid var(--line); border-radius:18px; padding:12px; background:#111b31;
     }
     .muted{color:var(--muted); font-size:12px}
     .progress{
-      height:10px; background:#e2e8f0; border-radius:999px; overflow:hidden;
+      height:10px; background:#334155; border-radius:999px; overflow:hidden;
     }
     .progress > div{
       height:100%; background:#22c55e; width:0%;
@@ -89,170 +90,168 @@
       .title{font-size:22px}
     }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <div class="wrap">
-    <div class="card">
-      <div class="row" style="margin-bottom:12px;">
-        <div class="title">Roulette Tracker Advanced V5</div>
-        <div id="statusBadge" class="badge b-normal">Normal</div>
-      </div>
+<div class="wrap">
 
-      <div class="grid2">
-        <div class="stat">
-          <div class="label">Bankroll</div>
-          <div id="bankroll" class="value">$214.50</div>
-        </div>
-        <div class="stat">
-          <div class="label">Session Profit</div>
-          <div id="sessionProfit" class="value pos">+$0.00</div>
-        </div>
-        <div class="stat">
-          <div class="label">Level</div>
-          <div id="level" class="value">1</div>
-        </div>
-        <div class="stat">
-          <div class="label">Session High</div>
-          <div id="sessionHigh" class="value">$214.50</div>
-        </div>
-      </div>
 
-      <div style="height:10px"></div>
 
-      <div class="grid3">
-        <div class="stat soft">
-          <div class="label">Dozen Bet</div>
-          <div id="dozenBet" class="value small">$0.30</div>
-        </div>
-        <div class="stat soft">
-          <div class="label">Each Street</div>
-          <div id="streetBet" class="value small">$0.10</div>
-        </div>
-        <div class="stat soft">
-          <div class="label">Total Bet</div>
-          <div id="totalBet" class="value small">$0.60</div>
-        </div>
-      </div>
 
-      <div style="height:14px"></div>
 
-      <div class="grid2">
-        <button id="btnDozen" class="btn-dozen" onclick="processSpin('dozen')">Dozen Hit</button>
-        <button id="btnStreet" class="btn-street" onclick="processSpin('street')">Street Hit</button>
-      </div>
-      <div style="height:10px"></div>
-      <button id="btnMiss" class="btn-miss" onclick="processSpin('miss')">Miss / Loss</button>
 
-      <div id="targetMsg" class="note green" style="display:none; margin-top:12px;">
+
+
+
+
+<div class="card">
+<div class="row" style="margin-bottom:12px;">
+<div class="title">Roulette Tracker Advanced V11</div>
+<div class="badge b-normal" id="statusBadge">Normal</div>
+</div>
+<div class="grid2">
+<div class="stat">
+<div class="label">Bankroll</div>
+<div class="value" id="bankroll">$105.40</div>
+</div>
+<div class="stat">
+<div class="label">Session Profit</div>
+<div class="value pos" id="sessionProfit">+$0.00</div>
+</div>
+<div class="stat">
+<div class="label">Level</div>
+<div class="value" id="level">1</div>
+</div>
+<div class="stat">
+<div class="label">Session High</div>
+<div class="value" id="sessionHigh">$105.40</div>
+</div>
+</div>
+<div style="height:10px"></div>
+<div class="grid3">
+<div class="stat soft">
+<div class="label">Dozen Bet</div>
+<div class="value small" id="dozenBet">$0.30</div>
+</div>
+<div class="stat soft">
+<div class="label">Each Street</div>
+<div class="value small" id="streetBet">$0.10</div>
+</div>
+<div class="stat soft">
+<div class="label">Total Bet</div>
+<div class="value small" id="totalBet">$0.60</div>
+</div>
+</div>
+<div style="height:14px"></div>
+<div class="grid2">
+<button class="btn-dozen" id="btnDozen" onclick="processSpin('dozen')">Dozen Hit</button>
+<button class="btn-street" id="btnStreet" onclick="processSpin('street')">Street Hit</button>
+</div>
+<div style="height:10px"></div>
+<button class="btn-miss" id="btnMiss" onclick="processSpin('miss')">Miss / Loss</button>
+<div class="note green" id="targetMsg" style="display:none; margin-top:12px;">
         Target reached. Buttons are locked. Cash out or tap unlock only if you truly want to continue.
       </div>
-      <div style="height:10px"></div>
-      <button id="unlockPlayBtn" class="btn-outline" onclick="unlockAfterTarget()" style="display:none;">Unlock & Continue Playing</button>
-      <div id="recoveryMsg" class="note amber" style="display:none; margin-top:12px;">
+<div style="height:10px"></div>
+<button class="btn-outline" id="unlockPlayBtn" onclick="unlockAfterTarget()" style="display:none;">Unlock &amp; Continue Playing</button>
+<div class="note amber" id="recoveryMsg" style="display:none; margin-top:12px;">
         Recovery mode active. Keep playing until bankroll gets back to the original starting bankroll, then exit.
       </div>
-    </div>
+</div>
+<div class="card">
+<div class="section-title">Weekly Goal</div>
+<div class="grid2">
+<div class="stat soft">
+<div class="label">Weekly Goal</div>
+<div class="value small" id="weeklyGoalValue">$100.00</div>
+</div>
+<div class="stat soft">
+<div class="label">Last 7 Days</div>
+<div class="value small" id="weeklyTotalValue">$0.00</div>
+</div>
+</div>
+<div style="height:10px"></div>
+<div style="height:12px"></div>
+<div class="grid2">
+<div class="stat soft">
+<div class="label">Daily Goal</div>
+<div class="value small" id="dailyGoalValue">$20.00</div>
+</div>
+<div class="stat soft">
+<div class="label">Last 24 Hours</div>
+<div class="value small" id="dailyTotalValue">$0.00</div>
+</div>
+</div>
+<div style="height:10px"></div>
+<div class="kpi"><span class="muted">Daily progress</span><span class="pill" id="dailyLeft">$20.00 left</span></div>
+<div class="progress"><div id="pDaily"></div></div>
+<div style="height:12px"></div>
+<div class="kpi"><span class="muted">7-day progress</span><span class="pill" id="weeklyLeft">$100.00 left</span></div>
+<div class="progress"><div id="pWeekly"></div></div>
+<div style="height:12px"></div>
+<div class="grid2">
+<div>
+<div class="label">Set 7-day Goal</div>
+<input id="weeklyGoalInput" step="1.00" type="number"/>
+</div>
+<div>
+<div class="label">Settings Lock</div>
+<button class="btn-outline" id="settingsLockBtn" onclick="toggleSettingsLock()">Lock Settings</button>
+</div>
+</div>
 
-    <div class="card">
-      <div class="section-title">Session Settings</div>
-      <div class="grid2">
-        <div>
-          <div class="label">Start Bankroll</div>
-          <input id="startingBankrollInput" type="number" step="0.01" />
-        </div>
-        <div>
-          <div class="label">Target Profit</div>
-          <input id="targetProfitInput" type="number" step="0.10" />
-        </div>
-        <div>
-          <div class="label">Base Unit</div>
-          <input id="baseUnitInput" type="number" step="0.01" />
-        </div>
-        <div>
-          <div class="label">Session Name</div>
-          <input id="sessionNameInput" type="text" placeholder="Optional" />
-        </div>
-      </div>
-      <div style="height:12px"></div>
-      <div class="grid2">
-        <button class="btn-secondary" onclick="resetSession()">Reset Session</button>
-        <button class="btn-outline" onclick="startFromCurrent()">Start From Current</button>
-        <button class="btn-ghost" onclick="undoLast()">Undo Last Spin</button>
-        <button class="btn-danger" onclick="finishAndSaveSession()">Finish & Save Session</button>
-      </div>
-    </div>
+</div>
+<div class="card">
+<div class="section-title">Session Graph</div>
+<div style="position:relative;width:100%;aspect-ratio:1/1;"><canvas id="bankrollChart"></canvas></div>
+</div>
+<div class="card">
+<div class="section-title">Spin Log</div>
+<div class="log" id="spinLog"></div>
+</div>
+<div class="card">
+<div class="section-title">Growth Mode</div>
 
-    <div class="card">
-      <div class="section-title">Milestones</div>
-      <div class="grid2">
-        <div>
-          <div class="kpi"><span class="muted">To $300</span><span id="to300" class="pill">$89.80 left</span></div>
-          <div class="progress"><div id="p300"></div></div>
-        </div>
-        <div>
-          <div class="kpi"><span class="muted">To $500</span><span id="to500" class="pill">$289.80 left</span></div>
-          <div class="progress"><div id="p500"></div></div>
-        </div>
-        <div>
-          <div class="kpi"><span class="muted">To $1000</span><span id="to1000" class="pill">$789.80 left</span></div>
-          <div class="progress"><div id="p1000"></div></div>
-        </div>
-        <div>
-          <div class="kpi"><span class="muted">Today Total</span><span id="todayTotal" class="pill">$0.00</span></div>
-          <div class="progress"><div id="pToday"></div></div>
-        </div>
-      </div>
-    </div>
+<div style="position:relative;width:100%;aspect-ratio:16/10;"><canvas id="growthChart"></canvas></div>
+</div>
+<div class="card">
+<div class="section-title">Session Settings</div>
+<div class="grid2">
+<div>
+<div class="label">Start Bankroll</div>
+<input id="startingBankrollInput" step="0.01" type="number"/>
+</div>
+<div>
+<div class="label">Target Profit</div>
+<input id="targetProfitInput" step="0.10" type="number"/>
+</div>
+<div>
+<div class="label">Base Unit</div>
+<input id="baseUnitInput" step="0.01" type="number"/>
+</div>
+<div>
+<div class="label">Session Name</div>
+<input id="sessionNameInput" placeholder="Optional" type="text"/>
+</div>
+</div>
+<div style="height:12px"></div>
+<div class="grid2">
+<button class="btn-secondary" onclick="resetSession()">Reset Session</button>
+<button class="btn-outline" onclick="startFromCurrent()">Start From Current</button>
 
-    <div class="card">
-      <div class="section-title">Daily Stats</div>
-      <div class="grid4">
-        <div class="stat soft">
-          <div class="label">Saved Sessions</div>
-          <div id="savedSessions" class="value small">0</div>
-        </div>
-        <div class="stat soft">
-          <div class="label">Win Days</div>
-          <div id="winDays" class="value small">0</div>
-        </div>
-        <div class="stat soft">
-          <div class="label">Avg Saved</div>
-          <div id="avgSaved" class="value small">$0.00</div>
-        </div>
-        <div class="stat soft">
-          <div class="label">Best Saved</div>
-          <div id="bestSaved" class="value small">$0.00</div>
-        </div>
-      </div>
-    </div>
-
-
-    <div class="card">
-      <div class="section-title">Session Graph</div>
-      <canvas id="bankrollChart" height="180"></canvas>
-    </div>
-
-    <div class="card">
-      <div class="section-title">Spin Log</div>
-      <div id="spinLog" class="log"></div>
-    </div>
-
-    <div class="card">
-      <div class="section-title">Saved Session History</div>
-      <div id="sessionHistory" class="log"></div>
-    </div>
-
-    <div class="footer-space"></div>
-  </div>
-
+<button class="btn-danger" onclick="finishAndSaveSession()">Finish &amp; Save Session</button>
+<button class="btn-danger" onclick="factoryResetAll()">Factory Reset All Data</button>
+</div>
+</div>
+<div class="footer-space"></div>
+</div>
 <script>
 const storageKey = "rouletteTrackerAdvanced_v1";
 
 const state = {
-  startingBankroll: 214.50,
-  bankroll: 214.50,
-  sessionHigh: 214.50,
+  startingBankroll: 105.40,
+  bankroll: 105.40,
+  sessionHigh: 105.40,
   targetProfit: 6.5,
   baseUnit: 0.10,
   level: 1,
@@ -261,7 +260,12 @@ const state = {
   spins: [],
   historySnapshots: [],
   savedSessions: [],
-  targetLocked: false
+  targetLocked: false,
+  lastExitBankroll: 105.40,
+  dailyGoal: 20.00,
+  dailyGoal: 20.00,
+  weeklyGoal: 100.00,
+  settingsLocked: false
 };
 
 function fmt(n){ return "$" + Number(n).toFixed(2); }
@@ -315,10 +319,16 @@ function lockTargetIfNeeded(){
   const profit = round2(state.bankroll - state.startingBankroll);
   if(!state.targetLocked && profit >= state.targetProfit){
     state.targetLocked = true;
+    state.lastExitBankroll = state.bankroll;
   }
 }
 function unlockAfterTarget(){
   state.targetLocked = false;
+  state.lastExitBankroll = 105.40;
+  state.dailyGoal = 20.00;
+  state.dailyGoal = 20.00;
+  state.weeklyGoal = 100.00;
+  state.settingsLocked = false;
   updateUI();
 }
 function updateUI(){
@@ -351,6 +361,7 @@ function updateUI(){
   renderSessionHistory();
   renderStats();
   updateChart();
+  updateGrowthChart();
   saveState();
 }
 function renderSpinLog(){
@@ -394,6 +405,36 @@ function renderSessionHistory(){
     </div>
   `).join("");
 }
+
+function getRollingDailySessions(saved){
+  const now = Date.now();
+  const oneDay = 24 * 60 * 60 * 1000;
+  return saved.filter(s => s.timestamp && (now - s.timestamp <= oneDay));
+}
+function getRollingWeeklySessions(saved){
+  const now = Date.now();
+  const oneWeek = 7 * 24 * 60 * 60 * 1000;
+  return saved.filter(s => s.timestamp && (now - s.timestamp <= oneWeek));
+}
+function applySettingsLockUI(){
+  const locked = !!state.settingsLocked;
+  const ids = ["startingBankrollInput","targetProfitInput","baseUnitInput","weeklyGoalInput"];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.disabled = locked;
+  });
+  const btn = document.getElementById("settingsLockBtn");
+  if(btn){
+    btn.textContent = locked ? "Unlock Settings" : "Lock Settings";
+    btn.className = locked ? "btn-danger" : "btn-outline";
+  }
+}
+function toggleSettingsLock(){
+  state.settingsLocked = !state.settingsLocked;
+  applySettingsLockUI();
+  saveState();
+}
+
 function renderStats(){
   const saved = state.savedSessions;
   const today = todayStr();
@@ -416,6 +457,27 @@ function renderStats(){
   const todayGoalBase = 20;
   const pctToday = Math.max(0, Math.min(100, (todayTotal / todayGoalBase) * 100));
   document.getElementById("pToday").style.width = pctToday + "%";
+
+  const dailyGoal = round2(state.dailyGoal || 0);
+  const dailySessions = getRollingDailySessions(saved);
+  const dailyTotal = round2(dailySessions.reduce((a,b)=>a+b.profit,0));
+  document.getElementById("dailyGoalValue").textContent = fmt(dailyGoal);
+  document.getElementById("dailyTotalValue").textContent = fmt(dailyTotal);
+  const dailyLeft = Math.max(0, round2(dailyGoal - dailyTotal));
+  document.getElementById("dailyLeft").textContent = dailyLeft === 0 ? "Goal reached" : fmt(dailyLeft) + " left";
+  document.getElementById("pDaily").style.width = (dailyGoal > 0 ? Math.max(0, Math.min(100, (dailyTotal / dailyGoal) * 100)) : 0) + "%";
+
+  const weeklyGoal = round2(state.weeklyGoal || 0);
+  const weeklySessions = getRollingWeeklySessions(saved);
+  const weeklyTotal = round2(weeklySessions.reduce((a,b)=>a+b.profit,0));
+  document.getElementById("weeklyGoalValue").textContent = fmt(weeklyGoal);
+  document.getElementById("weeklyTotalValue").textContent = fmt(weeklyTotal);
+  document.getElementById("weeklyGoalInput").value = weeklyGoal.toFixed(2);
+  const weeklyLeft = Math.max(0, round2(weeklyGoal - weeklyTotal));
+  document.getElementById("weeklyLeft").textContent = weeklyLeft === 0 ? "Goal reached" : fmt(weeklyLeft) + " left";
+  document.getElementById("pWeekly").style.width = (weeklyGoal > 0 ? Math.max(0, Math.min(100, (weeklyTotal / weeklyGoal) * 100)) : 0) + "%";
+
+  applySettingsLockUI();
 }
 function updateMilestone(id, goal){
   const current = state.bankroll;
@@ -484,29 +546,36 @@ function processSpin(result){
   updateUI();
 }
 function resetSession(){
-  state.startingBankroll = Number(document.getElementById("startingBankrollInput").value || state.startingBankroll);
-  state.targetProfit = Number(document.getElementById("targetProfitInput").value || state.targetProfit);
-  state.baseUnit = Number(document.getElementById("baseUnitInput").value || state.baseUnit);
+  autoSaveCurrentSession('Reset');
+  if(!state.settingsLocked){
+    state.startingBankroll = Number(document.getElementById("startingBankrollInput").value || state.startingBankroll);
+    state.targetProfit = Number(document.getElementById("targetProfitInput").value || state.targetProfit);
+    state.baseUnit = Number(document.getElementById("baseUnitInput").value || state.baseUnit);
+    state.weeklyGoal = Number(document.getElementById("weeklyGoalInput").value || state.weeklyGoal);
+  }
 
-  state.bankroll = round2(state.startingBankroll);
+  state.bankroll = round2(state.lastExitBankroll);
+  state.startingBankroll = round2(state.lastExitBankroll);
   state.sessionHigh = round2(state.startingBankroll);
   state.level = 1;
   state.dozenWinChain = 0;
   state.recoveryMode = false;
   state.targetLocked = false;
+  state.lastExitBankroll = 105.40;
   state.spins = [];
   state.historySnapshots = [];
   updateUI();
 }
 function startFromCurrent(){
-  state.targetProfit = Number(document.getElementById("targetProfitInput").value || state.targetProfit);
-  state.baseUnit = Number(document.getElementById("baseUnitInput").value || state.baseUnit);
+  autoSaveCurrentSession('Start From Current');
   state.startingBankroll = round2(state.bankroll);
+  state.lastExitBankroll = state.bankroll;
   state.sessionHigh = round2(state.bankroll);
   state.level = 1;
   state.dozenWinChain = 0;
   state.recoveryMode = false;
   state.targetLocked = false;
+  state.lastExitBankroll = 105.40;
   state.spins = [];
   state.historySnapshots = [];
   updateUI();
@@ -526,18 +595,68 @@ function undoLast(){
   state.spins = snap.spins;
   updateUI();
 }
-function finishAndSaveSession(){
-  const name = document.getElementById("sessionNameInput").value.trim();
+
+function autoSaveCurrentSession(reason){
+  if(state.spins.length === 0) return;
   const profit = round2(state.bankroll - state.startingBankroll);
-  state.savedSessions.push({
-    name,
+  const nameField = document.getElementById("sessionNameInput");
+  const name = nameField ? nameField.value.trim() : "";
+  const sessionRecord = {
+    name: name || ("Auto Saved - " + reason),
     date: todayStr(),
+    timestamp: Date.now(),
     start: round2(state.startingBankroll),
     end: round2(state.bankroll),
     profit,
     spins: state.spins.length
-  });
-  document.getElementById("sessionNameInput").value = "";
+  };
+  state.lastExitBankroll = round2(state.bankroll);
+
+  const last = state.savedSessions[state.savedSessions.length - 1];
+  const isDuplicate = last &&
+    last.date === sessionRecord.date &&
+    last.start === sessionRecord.start &&
+    last.end === sessionRecord.end &&
+    last.profit === sessionRecord.profit &&
+    last.spins === sessionRecord.spins &&
+    last.name === sessionRecord.name;
+
+  if(!isDuplicate){
+    state.savedSessions.push(sessionRecord);
+  }
+
+  if(nameField) nameField.value = "";
+}
+
+
+function factoryResetAll(){
+  const ok = confirm("This will erase all local session history, stats, and current session data. Continue?");
+  if(!ok) return;
+
+  localStorage.removeItem(storageKey);
+
+  state.startingBankroll = 105.40;
+  state.bankroll = 105.40;
+  state.sessionHigh = 105.40;
+  state.targetProfit = 6.5;
+  state.baseUnit = 0.10;
+  state.level = 1;
+  state.dozenWinChain = 0;
+  state.recoveryMode = false;
+  state.spins = [];
+  state.historySnapshots = [];
+  state.savedSessions = [];
+  state.targetLocked = false;
+  state.lastExitBankroll = 105.40;
+
+  const nameInput = document.getElementById("sessionNameInput");
+  if(nameInput) nameInput.value = "";
+
+  updateUI();
+}
+
+function finishAndSaveSession(){
+  autoSaveCurrentSession('Manual Save');
   updateUI();
 }
 
@@ -573,7 +692,7 @@ function initChart(){
     },
     options: {
       responsive: true,
-      maintainAspectRatio: false,
+      maintainAspectRatio: true,
       plugins: {
         legend: { display: false },
         tooltip: {
@@ -592,7 +711,13 @@ function initChart(){
           grid: { color: "#e2e8f0" }
         },
         y: {
-          title: { display: true, text: "Bankroll" },
+          min: state.startingBankroll - 20,
+          max: state.startingBankroll + 20,
+          ticks: {
+            callback: function(value){ return "$" + value.toFixed(0); }
+          },
+          grid: { color: "#e2e8f0" }
+        },
           ticks: {
             color: "#64748b",
             callback: function(value){ return fmt(value); }
@@ -610,10 +735,21 @@ function updateChart(){
   bankrollChart.update();
 }
 
+
+document.addEventListener("input", function(e){
+  if(state.settingsLocked) return;
+  if(e.target && e.target.id === "weeklyGoalInput"){
+    state.weeklyGoal = Number(e.target.value || state.weeklyGoal);
+    updateUI();
+  }
+});
+
 loadState();
 updateUI();
 initChart();
+initGrowthChart();
 updateChart();
+updateGrowthChart();
 </script>
 </body>
 </html>
