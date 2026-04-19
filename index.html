@@ -3,359 +3,336 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Roulette Tracker Advanced V16 Dark</title>
+  <title>Roulette Tracker Rebuild</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root{
-      --bg:#07111f;
-      --bg2:#0b1730;
-      --card:#0b1730;
-      --card2:#0f1d39;
-      --text:#f8fafc;
-      --muted:#94a3b8;
-      --line:#223252;
-      --blue:#1d8fe1;
-      --green:#2ac85f;
-      --green2:#3d5f0a;
-      --red:#b61f24;
-      --danger:#7a0d32;
-      --pill:#112344;
-      --shadow:0 12px 28px rgba(0,0,0,.28);
+      --bg:#030d22;
+      --bg2:#071833;
+      --panel:#071a3a;
+      --panel2:#091f45;
+      --panel3:#0b2550;
+      --line:#173768;
+      --text:#f7fbff;
+      --muted:#9fb2d4;
+      --blue:#4990ff;
+      --green:#43d17c;
+      --greenDeep:#0c4a2e;
+      --red:#ff5b6d;
+      --redDeep:#5b1020;
+      --gold:#f5be42;
+      --purple:#b374ff;
+      --shadow:0 20px 40px rgba(0,0,0,.34);
+      --radius:26px;
+      --radius-sm:20px;
     }
     *{box-sizing:border-box}
-    html,body{margin:0;padding:0}
-    body{
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-      background:linear-gradient(180deg,var(--bg) 0%, var(--bg2) 100%);
-      color:var(--text);
-    }
-    .wrap{
-      max-width:760px;
-      margin:0 auto;
-      padding:16px 14px 40px;
-    }
+    html,body{margin:0;padding:0;background:radial-gradient(circle at top left, #0a2146 0%, var(--bg) 38%, #020914 100%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+    body{min-height:100vh}
+    .app{max-width:860px;margin:0 auto;padding:18px 14px 36px}
     .card{
-      background:var(--card);
-      border:1px solid var(--line);
-      border-radius:24px;
-      padding:18px;
-      margin-bottom:14px;
+      background:linear-gradient(180deg, rgba(7,26,58,.98) 0%, rgba(5,20,44,.98) 100%);
+      border:1px solid rgba(77,125,205,.24);
+      border-radius:32px;
       box-shadow:var(--shadow);
-    }
-    .row{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-    }
-    .title{
-      font-size:24px;
-      font-weight:800;
-      line-height:1.1;
-      letter-spacing:-.02em;
-    }
-    .badge{
-      padding:10px 14px;
-      border-radius:999px;
-      font-size:12px;
-      font-weight:800;
-      white-space:nowrap;
-      background:#12305b;
-      color:#6aa9ff;
-    }
-    .grid2,.grid3,.grid4{
-      display:grid;
-      gap:12px;
-    }
-    .grid2{grid-template-columns:repeat(2,1fr)}
-    .grid3{grid-template-columns:repeat(3,1fr)}
-    .grid4{grid-template-columns:repeat(4,1fr)}
-    .stat{
-      background:var(--card2);
-      border:1px solid var(--line);
-      border-radius:22px;
-      padding:16px;
-    }
-    .label{
-      font-size:12px;
-      color:var(--muted);
-      margin-bottom:8px;
-    }
-    .value{
-      font-size:28px;
-      font-weight:800;
-      letter-spacing:-.03em;
-    }
-    .value.small{font-size:18px}
-    .pos{color:var(--green)}
-    .neg{color:#ff6b6b}
-    input{
-      width:100%;
-      border:1px solid var(--line);
-      border-radius:18px;
-      padding:14px;
-      font-size:16px;
-      background:#08142a;
-      color:var(--text);
-      outline:none;
-    }
-    input:disabled{
-      opacity:.6;
-    }
-    .section-title{
-      font-size:18px;
-      font-weight:800;
-      margin-bottom:12px;
-    }
-    button{
-      appearance:none;
-      border:none;
-      border-radius:22px;
-      padding:16px 14px;
-      font-size:17px;
-      font-weight:800;
-      cursor:pointer;
-      width:100%;
-      color:#fff;
-    }
-    button:disabled{opacity:.5;cursor:not-allowed}
-    .btn-dozen{background:#125a85}
-    .btn-street{background:#486d0d}
-    .btn-miss{background:#a31b1f}
-    .btn-secondary{background:#364965}
-    .btn-outline{background:#08142a;border:1px solid var(--line)}
-    .btn-danger{background:#7a0d32}
-    .note{
-      border-radius:18px;
-      padding:12px;
-      font-size:14px;
-      line-height:1.35;
-      border:1px solid var(--line);
-      background:#0a2a4c;
-      color:#9cc3ff;
-    }
-    .progress{
-      height:12px;
-      background:#31425f;
-      border-radius:999px;
+      padding:18px;
+      margin-bottom:16px;
       overflow:hidden;
-      margin-top:6px;
     }
-    .progress > div{
-      height:100%;
-      width:0%;
-      background:#3b82f6;
+    .main-card{padding:18px 18px 16px}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+    .headline{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+    .title{font-size:24px;font-weight:900;letter-spacing:-.03em}
+    .chip{
+      display:inline-flex;align-items:center;gap:9px;
+      padding:11px 16px;border-radius:999px;font-size:13px;font-weight:800;
+      border:1px solid transparent;white-space:nowrap
     }
-    .kpi{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:8px;
-      margin-top:8px;
-      font-size:14px;
-    }
-    .pill{
-      background:var(--pill);
-      padding:8px 12px;
-      border-radius:999px;
-      font-size:12px;
-      font-weight:800;
-      color:#e5e7eb;
-    }
-    .log{
-      max-height:320px;
-      overflow:auto;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-    .log-item{
-      border:1px solid var(--line);
-      border-radius:18px;
-      padding:12px;
-      background:var(--card2);
-    }
-    .muted{color:var(--muted);font-size:12px}
-    .footer-space{height:10px}
-    canvas{display:block;width:100% !important}
-    @media (max-width:560px){
-      .grid4{grid-template-columns:repeat(2,1fr)}
-      .value{font-size:24px}
-      .title{font-size:22px}
-    }
-  
-    #startOverlay{
-      position:fixed;
-      inset:0;
-      background:linear-gradient(180deg, rgba(7,17,31,.98) 0%, rgba(11,23,48,.98) 100%);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      z-index:9999;
-      padding:18px;
-    }
-    #startOverlay.hidden{display:none}
-    .overlay-card{
-      width:min(100%,420px);
-      background:var(--card);
-      border:1px solid var(--line);
+    .chip.blue{background:rgba(45,110,255,.16);color:#76a7ff;border-color:rgba(73,144,255,.18)}
+    .chip.green{background:rgba(24,100,56,.18);color:#5ced95;border-color:rgba(67,209,124,.20)}
+    .chip.dot::before{content:"";width:12px;height:12px;border-radius:999px;background:currentColor;box-shadow:0 0 12px currentColor;display:block}
+
+    .grid-3,.grid-2{display:grid;gap:14px}
+    .grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+
+    .mini-card,.hero-card,.action-card{
       border-radius:28px;
-      padding:22px;
-      box-shadow:var(--shadow);
+      border:1px solid rgba(77,125,205,.22);
+      background:linear-gradient(180deg, rgba(6,24,55,.95) 0%, rgba(4,17,40,.95) 100%);
+      padding:18px;
+      min-width:0;
+      position:relative;
     }
-    .overlay-title{
-      font-size:28px;
-      font-weight:800;
-      letter-spacing:-.03em;
-      margin:0 0 10px;
-      line-height:1.05;
+    .hero-card{padding:22px 20px}
+    .hero-row{display:flex;align-items:center;justify-content:space-between;gap:14px}
+    .label{font-size:15px;color:var(--muted);margin-bottom:10px}
+    .value-xl{font-size:34px;font-weight:900;letter-spacing:-.04em;line-height:1}
+    .value-lg{font-size:28px;font-weight:900;letter-spacing:-.04em;line-height:1.05}
+    .value-md{font-size:22px;font-weight:900;letter-spacing:-.03em;line-height:1.05}
+    .value-pos{color:var(--green)}
+    .value-neg{color:var(--red)}
+    .icon-pill{
+      width:88px;height:88px;border-radius:999px;display:flex;align-items:center;justify-content:center;
+      border:2px solid currentColor;background:rgba(255,255,255,.04);font-size:38px;flex:0 0 auto;opacity:.95
     }
-    .overlay-sub{
-      color:var(--muted);
-      font-size:14px;
-      line-height:1.4;
-      margin:0 0 18px;
+    .icon-blue{color:var(--blue)}
+    .icon-purple{color:var(--purple)}
+    .icon-gold{color:var(--gold)}
+    .icon-green{color:var(--green)}
+
+    .actions-title{font-size:18px;font-weight:900;margin:0 0 14px}
+    button{
+      appearance:none;border:none;border-radius:24px;padding:18px 16px;font-size:18px;font-weight:900;cursor:pointer;
+      color:#fff;width:100%;transition:transform .06s ease, opacity .2s ease, filter .2s ease;
     }
-    .overlay-error{
-      color:#fca5a5;
-      font-size:13px;
-      min-height:18px;
-      margin-top:8px;
+    button:active{transform:translateY(1px)}
+    button:disabled{opacity:.52;cursor:not-allowed}
+    .btn-green{background:linear-gradient(180deg,#0f6f43 0%, #0a5534 100%);box-shadow:inset 0 0 0 2px rgba(73,232,149,.35)}
+    .btn-red{background:linear-gradient(180deg,#7b1730 0%, #571120 100%);box-shadow:inset 0 0 0 2px rgba(255,98,123,.38)}
+    .btn-gold{background:linear-gradient(180deg,#7a5215 0%, #614114 100%);box-shadow:inset 0 0 0 2px rgba(245,190,66,.38)}
+    .btn-dark{background:linear-gradient(180deg,#102a59 0%, #0a1f43 100%);box-shadow:inset 0 0 0 2px rgba(86,144,255,.18)}
+    .btn-danger{background:linear-gradient(180deg,#5f1737 0%, #451128 100%);box-shadow:inset 0 0 0 2px rgba(255,94,120,.24)}
+    .btn-ghost{background:linear-gradient(180deg,#0b1f45 0%, #091936 100%);box-shadow:inset 0 0 0 2px rgba(152,181,235,.15)}
+
+    .sub-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:14px}
+    .info-note{margin-top:14px;padding:16px 18px;border-radius:22px;background:rgba(17,43,87,.45);border:1px solid rgba(93,132,202,.18);font-size:15px;color:#86b1ff;line-height:1.4}
+
+    .chart-card{padding:16px 16px 12px}
+    .section-title{font-size:22px;font-weight:900;margin:4px 0 12px}
+    .chart-wrap{
+      position:relative;
+      height:260px;
+      width:100%;
+      margin:0;
+      padding:0;
+    }
+    canvas{display:block;width:100% !important;height:100% !important}
+
+    .log{display:flex;flex-direction:column;gap:10px;max-height:300px;overflow:auto}
+    .log-item{background:linear-gradient(180deg, rgba(8,29,61,.95) 0%, rgba(6,21,45,.95) 100%);border:1px solid rgba(77,125,205,.20);border-radius:20px;padding:12px 14px}
+    .row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .muted{color:var(--muted);font-size:12px}
+    .pill{display:inline-flex;align-items:center;padding:8px 12px;border-radius:999px;background:rgba(17,35,68,.9);font-size:12px;font-weight:800;color:#e8eefc}
+    .progress{height:12px;border-radius:999px;background:#223759;overflow:hidden;border:1px solid rgba(77,125,205,.16)}
+    .progress>div{height:100%;width:0%;background:linear-gradient(90deg,#5598ff 0%, #42d07c 100%)}
+    .kpi{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:10px 0 7px;font-size:14px}
+    .settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    input{
+      width:100%;border:1px solid rgba(77,125,205,.22);border-radius:18px;padding:14px;background:#071731;color:var(--text);font-size:16px;outline:none
+    }
+
+    .overlay{position:fixed;inset:0;background:rgba(1,8,20,.85);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}
+    .overlay.hidden{display:none}
+    .overlay-card{width:min(100%,420px);background:linear-gradient(180deg, rgba(7,26,58,.98) 0%, rgba(5,20,44,.98) 100%);border:1px solid rgba(77,125,205,.24);border-radius:30px;padding:22px;box-shadow:var(--shadow)}
+    .overlay-title{font-size:30px;font-weight:900;letter-spacing:-.04em;margin:0 0 10px}
+    .overlay-sub{margin:0 0 16px;color:var(--muted);line-height:1.4}
+    .overlay-error{color:#f7a6af;font-size:13px;min-height:16px;margin-top:8px}
+
+    @media (max-width:720px){
+      .grid-3,.grid-2,.sub-actions,.settings-grid{grid-template-columns:1fr}
+      .title{font-size:22px}
+      .value-xl{font-size:30px}
+      .icon-pill{width:74px;height:74px;font-size:30px}
+      .chart-wrap{height:220px}
+      .hero-row{align-items:flex-start}
+    }
+
+    /* iPhone 14 Pro tuned layout */
+    @media only screen and (max-width: 393px){
+      body{min-height:100vh;min-height:100dvh}
+      .app{max-width:393px;margin:0 auto;padding:calc(12px + env(safe-area-inset-top)) 10px calc(18px + env(safe-area-inset-bottom));}
+      .card{border-radius:28px;padding:14px;margin-bottom:12px}
+      .main-card{padding:14px 14px 12px}
+      .topbar{margin-bottom:12px;gap:10px}
+      .headline{gap:8px}
+      .title{font-size:20px}
+      .chip{padding:9px 12px;font-size:11px}
+      .grid-3{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+      .grid-2{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+      .mini-card,.hero-card,.action-card{border-radius:22px;padding:14px}
+      .hero-card{padding:18px 14px}
+      .label{font-size:12px;margin-bottom:6px}
+      .value-xl{font-size:32px}
+      .value-lg{font-size:18px}
+      .value-md{font-size:16px}
+      .icon-pill{width:42px;height:42px;font-size:18px;border-width:1.5px}
+      .actions-title{font-size:16px;margin-bottom:10px}
+      button{border-radius:20px;padding:16px 12px;font-size:16px}
+      .sub-actions{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:10px}
+      .info-note{margin-top:10px;padding:12px 14px;border-radius:18px;font-size:13px}
+      .section-title{font-size:18px;margin:0 0 8px}
+      .chart-card{padding:14px 14px 10px}
+      .chart-wrap{height:210px}
+      .log{max-height:260px}
+      .log-item{border-radius:16px;padding:10px 12px}
+      .kpi{margin:8px 0 6px;font-size:13px}
+      .pill{padding:7px 10px;font-size:11px}
+      .progress{height:10px}
+      .settings-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+      input{border-radius:16px;padding:12px;font-size:16px}
+      .overlay{padding:12px}
+      .overlay-card{width:100%;max-width:360px;border-radius:26px;padding:18px}
+      .overlay-title{font-size:26px}
+      .overlay-sub{font-size:14px}
     }
 
   </style>
 </head>
 <body>
-
-  <div id="startOverlay">
+  <div id="startOverlay" class="overlay">
     <div class="overlay-card">
       <div class="overlay-title">Start Session</div>
-      <p class="overlay-sub">Enter your current bankroll to begin. The app will stay locked until you set it.</p>
+      <p class="overlay-sub">Enter your current bankroll to unlock the tracker.</p>
       <div class="label">Starting Bankroll</div>
       <input id="overlayBankrollInput" type="number" step="0.01" inputmode="decimal" placeholder="116.70" />
-      <div class="overlay-error" id="overlayError"></div>
-      <button id="overlayStartBtn" class="btn-secondary" style="margin-top:8px;">Start Session</button>
+      <div id="overlayError" class="overlay-error"></div>
+      <button id="overlayStartBtn" class="btn-dark" style="margin-top:8px">Start Session</button>
     </div>
   </div>
 
-  <div class="wrap">
-
-    <!-- 1. MAIN TRACKER -->
-    <div class="card">
-      <div class="row" style="margin-bottom:14px;">
-        <div class="title">Roulette Tracker<br>Advanced V16 Dark</div>
-        <div id="statusBadge" class="badge">Normal</div>
+  <div class="app">
+    <section class="card main-card">
+      <div class="topbar">
+        <div class="headline">
+          <div class="title">Golden Key</div>
+          <div class="chip blue">ROULETTE TRACKER</div>
+        </div>
+        <div id="statusChip" class="chip green dot">ACTIVE SESSION</div>
       </div>
 
-      <div class="grid2">
-        <div class="stat">
-          <div class="label">Bankroll</div>
-          <div id="bankroll" class="value">$106.40</div>
+      <div class="grid-3" style="margin-bottom:14px;">
+        <div class="mini-card">
+          <div class="hero-row" style="align-items:center;justify-content:space-between;">
+            <div style="min-width:0">
+              <div class="label">Level</div>
+              <div id="level" class="value-lg">1</div>
+            </div>
+            <div class="icon-pill icon-blue">↗</div>
+          </div>
         </div>
-        <div class="stat">
-          <div class="label">Session Profit</div>
-          <div id="sessionProfit" class="value pos">+$0.00</div>
+        <div class="mini-card">
+          <div class="hero-row" style="align-items:center;justify-content:space-between;">
+            <div style="min-width:0">
+              <div class="label">Streak Count</div>
+              <div id="streakCount" class="value-lg">0</div>
+            </div>
+            <div class="icon-pill icon-purple">◉</div>
+          </div>
         </div>
-        <div class="stat">
-          <div class="label">Level</div>
-          <div id="level" class="value">1</div>
-        </div>
-        <div class="stat">
-          <div class="label">Session High</div>
-          <div id="sessionHigh" class="value">$106.40</div>
-        </div>
-      </div>
-
-      <div style="height:12px"></div>
-
-      <div class="grid3">
-        <div class="stat">
-          <div class="label">Dozen Bet</div>
-          <div id="dozenBet" class="value small">$0.30</div>
-        </div>
-        <div class="stat">
-          <div class="label">Each Street</div>
-          <div id="streetBet" class="value small">$0.10</div>
-        </div>
-        <div class="stat">
-          <div class="label">Total Bet</div>
-          <div id="totalBet" class="value small">$0.60</div>
+        <div class="mini-card">
+          <div class="hero-row" style="align-items:center;justify-content:space-between;">
+            <div style="min-width:0">
+              <div class="label">Session High</div>
+              <div id="sessionHigh" class="value-lg">$0.00</div>
+            </div>
+            <div class="icon-pill icon-gold">★</div>
+          </div>
         </div>
       </div>
 
-      <div style="height:14px"></div>
-
-      <div class="grid2">
-        <button id="btnDozen" class="btn-dozen" onclick="processSpin('dozen')">Dozen Hit</button>
-        <button id="btnStreet" class="btn-street" onclick="processSpin('street')">Street Hit</button>
-      </div>
-      <div style="height:10px"></div>
-      <button id="btnMiss" class="btn-miss" onclick="processSpin('miss')">Miss / Loss</button>
-
-      <div id="targetMsg" class="note" style="display:none; margin-top:12px;">
-        Target reached. Buttons are locked. Cash out or unlock only if you truly want to continue.
-      </div>
-      <div style="height:10px"></div>
-      <button id="unlockPlayBtn" class="btn-outline" onclick="unlockAfterTarget()" style="display:none;">Unlock & Continue Playing</button>
-      <div id="recoveryMsg" class="note" style="display:none; margin-top:10px;">Recovery mode active.</div>
-    </div>
-
-    <!-- 2. WEEKLY/DAILY GOALS -->
-    <div class="card">
-      <div class="section-title">Weekly Goal</div>
-
-      <div class="grid2">
-        <div class="stat">
-          <div class="label">Weekly Goal</div>
-          <div id="weeklyGoalValue" class="value small">$100.00</div>
+      <div class="hero-card" style="margin-bottom:14px;text-align:center;">
+        <div style="display:flex;justify-content:center;margin-bottom:10px;">
+          <div id="bankrollStatePill" class="chip green dot" style="font-size:14px">IN PLAY</div>
         </div>
-        <div class="stat">
-          <div class="label">Last 7 Days</div>
-          <div id="weeklyTotalValue" class="value small">$0.00</div>
-        </div>
-        <div class="stat">
-          <div class="label">Daily Goal</div>
-          <div id="dailyGoalValue" class="value small">$20.00</div>
-        </div>
-        <div class="stat">
-          <div class="label">Last 24 Hours</div>
-          <div id="dailyTotalValue" class="value small">$0.00</div>
+        <div style="min-width:0">
+          <div class="label">Current Bankroll</div>
+          <div id="bankroll" class="value-xl">$0.00</div>
+          <div id="sessionProfit" class="label" style="margin-top:10px;font-size:16px;font-weight:800;color:#cfe0ff">+$0.00</div>
         </div>
       </div>
 
-      <div class="kpi"><span class="muted">Daily progress</span><span id="dailyLeft" class="pill">$20.00 left</span></div>
-      <div class="progress"><div id="pDaily"></div></div>
+      <div class="grid-3" style="margin-bottom:14px;">
+        <div class="mini-card">
+          <div class="hero-row" style="align-items:center;justify-content:space-between;">
+            <div style="min-width:0">
+              <div class="label">Dozen Bet</div>
+              <div id="dozenBet" class="value-lg" style="color:var(--blue)">$0.30</div>
+            </div>
+            <div class="icon-pill icon-blue">◌</div>
+          </div>
+        </div>
+        <div class="mini-card">
+          <div class="hero-row" style="align-items:center;justify-content:space-between;">
+            <div style="min-width:0">
+              <div class="label">Street Bet</div>
+              <div id="streetBet" class="value-lg" style="color:var(--green)">$0.10</div>
+            </div>
+            <div class="icon-pill icon-green">⌗</div>
+          </div>
+        </div>
+        <div class="mini-card">
+          <div class="hero-row" style="align-items:center;justify-content:space-between;">
+            <div style="min-width:0">
+              <div class="label">Total Bet</div>
+              <div id="totalBet" class="value-lg" style="color:var(--purple)">$0.60</div>
+            </div>
+            <div class="icon-pill icon-purple">$</div>
+          </div>
+        </div>
+      </div>
 
-      <div class="kpi" style="margin-top:16px;"><span class="muted">7-day progress</span><span id="weeklyLeft" class="pill">$100.00 left</span></div>
-      <div class="progress"><div id="pWeekly"></div></div>
-    </div>
+      <div class="action-card">
+        <div class="actions-title">Quick Actions</div>
+        <div class="grid-2">
+          <button id="btnDozen" class="btn-green" onclick="processSpin('dozen')">✓ DOZEN HIT</button>
+          <button id="btnMiss" class="btn-red" onclick="processSpin('miss')">✕ MISS</button>
+        </div>
+        <div style="height:12px"></div>
+        <button id="btnStreet" class="btn-gold" onclick="processSpin('street')">⌗ STREET HIT</button>
 
-    <!-- 3. SESSION GRAPH -->
-    <div class="card">
+        <div class="sub-actions">
+          <button class="btn-ghost" onclick="undoLastSpin()">↺ UNDO LAST</button>
+          <button class="btn-dark" onclick="resetSession()">⟳ NEW SESSION</button>
+          <button class="btn-danger" onclick="finishAndSaveSession()">🗑 SAVE SESSION</button>
+        </div>
+
+        <div id="targetMsg" class="info-note" style="display:none">Target reached. Buttons are locked. Cash out or unlock only if you really want to continue.</div>
+        <div id="recoveryMsg" class="info-note" style="display:none">Recovery mode active.</div>
+        <div id="streakNote" class="info-note">Streak Count: goes up on hits, resets to 0 after first miss, then goes negative on consecutive misses.</div>
+        <div style="height:12px"></div>
+        <button id="unlockPlayBtn" class="btn-dark" onclick="unlockAfterTarget()" style="display:none">Unlock & Continue</button>
+      </div>
+    </section>
+
+    <section class="card chart-card">
       <div class="section-title">Session Graph</div>
-      <div style="position:relative;width:100%;aspect-ratio:1/1;">
-        <canvas id="bankrollChart"></canvas>
-      </div>
-    </div>
+      <div class="chart-wrap"><canvas id="bankrollChart"></canvas></div>
+    </section>
 
-    <!-- 4. SPIN LOG -->
-    <div class="card">
+    <section class="card chart-card">
+      <div class="section-title">Growth Mode</div>
+      <div class="chart-wrap"><canvas id="growthChart"></canvas></div>
+    </section>
+
+    <section class="card">
+      <div class="section-title">Goals</div>
+      <div class="grid-2">
+        <div class="mini-card">
+          <div class="label">Daily Goal</div>
+          <div id="dailyGoalValue" class="value-md">$20.00</div>
+          <div class="kpi"><span class="muted">Last 24 Hours</span><span id="dailyTotalValue" class="pill">$0.00</span></div>
+          <div class="kpi"><span class="muted">Progress</span><span id="dailyLeft" class="pill">$20.00 left</span></div>
+          <div class="progress"><div id="pDaily"></div></div>
+        </div>
+        <div class="mini-card">
+          <div class="label">Weekly Goal</div>
+          <div id="weeklyGoalValue" class="value-md">$100.00</div>
+          <div class="kpi"><span class="muted">Last 7 Days</span><span id="weeklyTotalValue" class="pill">$0.00</span></div>
+          <div class="kpi"><span class="muted">Progress</span><span id="weeklyLeft" class="pill">$100.00 left</span></div>
+          <div class="progress"><div id="pWeekly"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
       <div class="section-title">Spin Log</div>
       <div id="spinLog" class="log"></div>
-    </div>
+    </section>
 
-    <!-- 5. GROWTH CHART -->
-    <div class="card">
-      <div class="section-title">Growth Mode</div>
-      <div style="position:relative;width:100%;aspect-ratio:16/10;">
-        <canvas id="growthChart"></canvas>
-      </div>
-    </div>
-
-    <!-- 6. SESSION SETTINGS -->
-    <div class="card">
+    <section class="card">
       <div class="section-title">Session Settings</div>
-      <div class="grid2">
+      <div class="settings-grid">
         <div>
           <div class="label">Start Bankroll</div>
           <input id="startingBankrollInput" type="number" step="0.01" />
@@ -373,23 +350,17 @@
           <input id="sessionNameInput" type="text" placeholder="Optional" />
         </div>
       </div>
-
-      <div style="height:12px"></div>
-
-      <div class="grid2">
-        <button class="btn-secondary" onclick="resetSession()">Reset Session</button>
-        <button class="btn-outline" onclick="startFromCurrent()">Start From Current</button>
-        <button class="btn-danger" onclick="finishAndSaveSession()">Finish & Save Session</button>
-        <button class="btn-danger" onclick="factoryResetAll()">Factory Reset All Data</button>
+      <div style="height:14px"></div>
+      <div class="sub-actions">
+        <button class="btn-dark" onclick="startFromCurrent()">Start From Current</button>
+        <button class="btn-ghost" onclick="resetSession()">Reset Session</button>
+        <button class="btn-danger" onclick="factoryResetAll()">Factory Reset</button>
       </div>
-    </div>
-
-    <div class="footer-space"></div>
+    </section>
   </div>
 
 <script>
-const storageKey = "rouletteTrackerAdvanced_v16_dark";
-
+const storageKey = "rouletteTrackerRebuild_v21";
 const state = {
   startingBankroll: 0,
   bankroll: 0,
@@ -405,7 +376,8 @@ const state = {
   targetLocked: false,
   lastExitBankroll: 0,
   dailyGoal: 20.00,
-  weeklyGoal: 100.00
+  weeklyGoal: 100.00,
+  streakCount: 0
 };
 
 let bankrollChart = null;
@@ -413,21 +385,23 @@ let growthChart = null;
 
 function fmt(n){ return "$" + Number(n).toFixed(2); }
 function fmtSigned(n){ return (n >= 0 ? "+" : "-") + fmt(Math.abs(n)); }
-function round2(n){ return Math.round(n * 100) / 100; }
+function round2(n){ return Math.round(Number(n) * 100) / 100; }
 
+function saveState(){ localStorage.setItem(storageKey, JSON.stringify(state)); }
+function loadState(){
+  const raw = localStorage.getItem(storageKey);
+  if(!raw) return;
+  try{ Object.assign(state, JSON.parse(raw)); }catch(e){}
+}
 
 function showStartOverlay(){
-  document.getElementById("startOverlay").classList.remove("hidden");
-  const input = document.getElementById("overlayBankrollInput");
-  input.value = "";
-  document.getElementById("overlayError").textContent = "";
-  setTimeout(()=>input.focus(), 30);
+  document.getElementById('startOverlay').classList.remove('hidden');
+  document.getElementById('overlayError').textContent = '';
+  setTimeout(()=>document.getElementById('overlayBankrollInput').focus(),30);
 }
-function hideStartOverlay(){
-  document.getElementById("startOverlay").classList.add("hidden");
-}
+function hideStartOverlay(){ document.getElementById('startOverlay').classList.add('hidden'); }
 function applyStartingBankroll(value){
-  const amount = round2(Number(value));
+  const amount = round2(value);
   state.startingBankroll = amount;
   state.bankroll = amount;
   state.sessionHigh = amount;
@@ -438,40 +412,31 @@ function applyStartingBankroll(value){
   state.targetLocked = false;
   state.spins = [];
   state.historySnapshots = [];
-  document.getElementById("sessionNameInput").value = "";
+  state.streakCount = 0;
+  document.getElementById('sessionNameInput').value = '';
   updateUI();
   hideStartOverlay();
 }
 function startSessionFromOverlay(){
-  const raw = document.getElementById("overlayBankrollInput").value.trim();
+  const raw = document.getElementById('overlayBankrollInput').value.trim();
   const value = Number(raw);
   if(!raw || !Number.isFinite(value) || value <= 0){
-    document.getElementById("overlayError").textContent = "Enter a valid bankroll greater than 0.";
+    document.getElementById('overlayError').textContent = 'Enter a valid bankroll greater than 0.';
     return;
   }
   applyStartingBankroll(value);
 }
 
-function saveState(){
-  localStorage.setItem(storageKey, JSON.stringify(state));
-}
-function loadState(){
-  const raw = localStorage.getItem(storageKey);
-  if(!raw) return;
-  try{
-    const data = JSON.parse(raw);
-    Object.assign(state, data);
-  }catch(e){}
-}
 function getStatus(){
-  const profit = state.bankroll - state.startingBankroll;
-  if (state.targetLocked) return ["Locked - cash out", "#0b2545", "#93c5fd"];
-  if (profit >= state.targetProfit) return ["Target hit", "#052e16", "#86efac"];
-  if (state.recoveryMode) return ["Recovery mode", "#422006", "#fdba74"];
-  if (state.level >= 8) return ["High risk", "#3b0a0a", "#fca5a5"];
-  if (state.level >= 5) return ["Watch zone", "#3a2605", "#fcd34d"];
-  return ["Normal", "#12305b", "#6aa9ff"];
+  const profit = round2(state.bankroll - state.startingBankroll);
+  if(state.targetLocked) return {text:'TARGET LOCKED', cls:'blue'};
+  if(profit >= state.targetProfit) return {text:'TARGET HIT', cls:'green'};
+  if(state.recoveryMode) return {text:'RECOVERY MODE', cls:'blue'};
+  if(state.level >= 8) return {text:'HIGH RISK', cls:'blue'};
+  if(state.level >= 5) return {text:'WATCH ZONE', cls:'blue'};
+  return {text:'ACTIVE SESSION', cls:'green'};
 }
+
 function takeSnapshot(){
   state.historySnapshots.unshift(JSON.parse(JSON.stringify({
     startingBankroll: state.startingBankroll,
@@ -485,14 +450,24 @@ function takeSnapshot(){
     targetLocked: state.targetLocked,
     lastExitBankroll: state.lastExitBankroll,
     spins: state.spins,
-    savedSessions: state.savedSessions
+    savedSessions: state.savedSessions,
+    streakCount: state.streakCount
   })));
 }
-function setMainButtonsDisabled(disabled){
-  document.getElementById("btnDozen").disabled = disabled;
-  document.getElementById("btnStreet").disabled = disabled;
-  document.getElementById("btnMiss").disabled = disabled;
+
+function undoLastSpin(){
+  if(!state.historySnapshots.length) return;
+  const prev = state.historySnapshots.shift();
+  Object.assign(state, prev);
+  updateUI();
 }
+
+function setMainButtonsDisabled(disabled){
+  document.getElementById('btnDozen').disabled = disabled;
+  document.getElementById('btnStreet').disabled = disabled;
+  document.getElementById('btnMiss').disabled = disabled;
+}
+
 function lockTargetIfNeeded(){
   const profit = round2(state.bankroll - state.startingBankroll);
   if(!state.targetLocked && profit >= state.targetProfit){
@@ -500,9 +475,15 @@ function lockTargetIfNeeded(){
     state.lastExitBankroll = state.bankroll;
   }
 }
-function unlockAfterTarget(){
-  state.targetLocked = false;
-  updateUI();
+function unlockAfterTarget(){ state.targetLocked = false; updateUI(); }
+
+function updateStreak(result){
+  if(result === 'dozen' || result === 'street'){
+    state.streakCount = state.streakCount >= 0 ? state.streakCount + 1 : 1;
+  } else {
+    if(state.streakCount > 0) state.streakCount = 0;
+    else state.streakCount -= 1;
+  }
 }
 
 function appendSpin(result, delta, note, levelBefore){
@@ -513,6 +494,7 @@ function appendSpin(result, delta, note, levelBefore){
     delta: round2(delta),
     bankrollAfter: round2(state.bankroll),
     highAfter: round2(state.sessionHigh),
+    streakAfter: state.streakCount,
     note,
     timestamp: Date.now()
   });
@@ -521,45 +503,44 @@ function appendSpin(result, delta, note, levelBefore){
 function processSpin(result){
   if(state.targetLocked) return;
   takeSnapshot();
-
   const levelBefore = state.level;
   let delta = 0;
-  let note = "";
+  let note = '';
 
-  if(result === "miss"){
+  if(result === 'miss'){
     delta = -6 * state.level * state.baseUnit;
     state.level += 1;
     state.dozenWinChain = 0;
-    note = "Loss: up 1 level";
-  } else if(result === "street"){
+    note = 'Loss: up 1 level';
+  } else if(result === 'street'){
     delta = 6 * state.level * state.baseUnit;
     state.level = Math.max(1, state.level - 1);
     state.dozenWinChain = 0;
-    note = "Street hit: down 1 level";
-  } else if(result === "dozen"){
+    note = 'Street hit: down 1 level';
+  } else if(result === 'dozen'){
     delta = 3 * state.level * state.baseUnit;
     if(state.dozenWinChain >= 1){
       state.level = Math.max(1, state.level - 1);
       state.dozenWinChain = 0;
-      note = "Second dozen win: down 1 level";
+      note = 'Second dozen win: down 1 level';
     } else {
       state.dozenWinChain = 1;
-      note = "First dozen win: stay same level";
+      note = 'First dozen win: stay same level';
     }
   }
 
+  updateStreak(result);
   state.bankroll = round2(state.bankroll + delta);
 
   if(state.bankroll > state.sessionHigh){
     state.sessionHigh = state.bankroll;
     state.level = 1;
     state.dozenWinChain = 0;
-    note = "New session high: reset to level 1";
+    note = 'New session high: reset to level 1';
   }
-
   if(!state.recoveryMode && state.bankroll < round2(state.startingBankroll * 0.55)){
     state.recoveryMode = true;
-    note += (note ? " • " : "") + "Enter recovery mode";
+    note += (note ? ' • ' : '') + 'Enter recovery mode';
   }
 
   lockTargetIfNeeded();
@@ -570,10 +551,10 @@ function processSpin(result){
 function autoSaveCurrentSession(reason){
   if(state.spins.length === 0) return;
   const profit = round2(state.bankroll - state.startingBankroll);
-  const nameField = document.getElementById("sessionNameInput");
-  const name = nameField ? nameField.value.trim() : "";
+  const nameField = document.getElementById('sessionNameInput');
+  const name = nameField ? nameField.value.trim() : '';
   const sessionRecord = {
-    name: name || ("Auto Saved - " + reason),
+    name: name || ('Auto Saved - ' + reason),
     date: new Date().toISOString().slice(0,10),
     timestamp: Date.now(),
     start: round2(state.startingBankroll),
@@ -581,38 +562,32 @@ function autoSaveCurrentSession(reason){
     profit,
     spins: state.spins.length
   };
-  const last = state.savedSessions[state.savedSessions.length - 1];
-  const isDuplicate = last &&
-    last.timestamp === sessionRecord.timestamp &&
-    last.start === sessionRecord.start &&
-    last.end === sessionRecord.end;
-  if(!isDuplicate){
-    state.savedSessions.push(sessionRecord);
-  }
+  state.savedSessions.push(sessionRecord);
   state.lastExitBankroll = round2(state.bankroll);
-  if(nameField) nameField.value = "";
+  if(nameField) nameField.value = '';
 }
 
 function resetSession(){
-  autoSaveCurrentSession("Reset");
-  state.startingBankroll = round2(state.lastExitBankroll);
-  state.targetProfit = Number(document.getElementById("targetProfitInput").value || state.targetProfit);
-  state.baseUnit = Number(document.getElementById("baseUnitInput").value || state.baseUnit);
-  state.bankroll = round2(state.lastExitBankroll);
-  state.sessionHigh = round2(state.lastExitBankroll);
+  autoSaveCurrentSession('Reset');
+  state.targetProfit = Number(document.getElementById('targetProfitInput').value || state.targetProfit);
+  state.baseUnit = Number(document.getElementById('baseUnitInput').value || state.baseUnit);
+  state.startingBankroll = round2(state.lastExitBankroll || state.bankroll || 0);
+  state.bankroll = round2(state.startingBankroll);
+  state.sessionHigh = round2(state.startingBankroll);
   state.level = 1;
   state.dozenWinChain = 0;
   state.recoveryMode = false;
   state.targetLocked = false;
   state.spins = [];
   state.historySnapshots = [];
+  state.streakCount = 0;
   updateUI();
 }
 
 function startFromCurrent(){
-  autoSaveCurrentSession("Start From Current");
-  state.targetProfit = Number(document.getElementById("targetProfitInput").value || state.targetProfit);
-  state.baseUnit = Number(document.getElementById("baseUnitInput").value || state.baseUnit);
+  autoSaveCurrentSession('Start From Current');
+  state.targetProfit = Number(document.getElementById('targetProfitInput').value || state.targetProfit);
+  state.baseUnit = Number(document.getElementById('baseUnitInput').value || state.baseUnit);
   state.startingBankroll = round2(state.bankroll);
   state.lastExitBankroll = round2(state.bankroll);
   state.sessionHigh = round2(state.bankroll);
@@ -622,17 +597,14 @@ function startFromCurrent(){
   state.targetLocked = false;
   state.spins = [];
   state.historySnapshots = [];
+  state.streakCount = 0;
   updateUI();
 }
 
-function finishAndSaveSession(){
-  autoSaveCurrentSession("Manual Save");
-  updateUI();
-}
+function finishAndSaveSession(){ autoSaveCurrentSession('Manual Save'); updateUI(); }
 
 function factoryResetAll(){
-  const ok = confirm("This will erase all local session history and current session data. Continue?");
-  if(!ok) return;
+  if(!confirm('This will erase all local session history and current session data. Continue?')) return;
   localStorage.removeItem(storageKey);
   state.startingBankroll = 0;
   state.bankroll = 0;
@@ -649,172 +621,159 @@ function factoryResetAll(){
   state.lastExitBankroll = 0;
   state.dailyGoal = 20.00;
   state.weeklyGoal = 100.00;
-  document.getElementById("sessionNameInput").value = "";
+  state.streakCount = 0;
+  document.getElementById('sessionNameInput').value = '';
   updateUI();
+  showStartOverlay();
 }
 
 function renderSpinLog(){
-  const box = document.getElementById("spinLog");
+  const box = document.getElementById('spinLog');
   if(state.spins.length === 0){
-    box.innerHTML = '<div class="note">No spins yet. Tap a result to start tracking.</div>';
+    box.innerHTML = '<div class="info-note" style="margin-top:0">No spins yet. Tap a result to start tracking.</div>';
     return;
   }
   box.innerHTML = state.spins.map(s => `
     <div class="log-item">
       <div class="row">
         <div>
-          <div style="font-weight:800">Spin ${s.spin} • L${s.levelBefore}</div>
+          <div style="font-weight:900">Spin ${s.spin} • L${s.levelBefore}</div>
           <div class="muted">${s.note}</div>
         </div>
-        <div style="font-weight:800; color:${s.delta >= 0 ? "#22c55e" : "#ff6b6b"}">${s.delta >= 0 ? "+" : "-"}${fmt(Math.abs(s.delta))}</div>
+        <div style="font-weight:900;color:${s.delta >= 0 ? 'var(--green)' : 'var(--red)'}">${s.delta >= 0 ? '+' : '-'}${fmt(Math.abs(s.delta))}</div>
       </div>
       <div style="height:8px"></div>
       <div class="row muted">
         <span>Bankroll: ${fmt(s.bankrollAfter)}</span>
+        <span>Streak: ${s.streakAfter}</span>
         <span>High: ${fmt(s.highAfter)}</span>
       </div>
     </div>
-  `).join("");
+  `).join('');
 }
 
-function getRollingDailySessions(saved){
-  const now = Date.now();
-  const oneDay = 24 * 60 * 60 * 1000;
-  return saved.filter(s => s.timestamp && (now - s.timestamp <= oneDay));
-}
-function getRollingWeeklySessions(saved){
-  const now = Date.now();
-  const oneWeek = 7 * 24 * 60 * 60 * 1000;
-  return saved.filter(s => s.timestamp && (now - s.timestamp <= oneWeek));
-}
+function getRollingDailySessions(saved){ const now = Date.now(), oneDay = 24*60*60*1000; return saved.filter(s => s.timestamp && (now - s.timestamp <= oneDay)); }
+function getRollingWeeklySessions(saved){ const now = Date.now(), oneWeek = 7*24*60*60*1000; return saved.filter(s => s.timestamp && (now - s.timestamp <= oneWeek)); }
 
 function renderGoals(){
   const dailyGoal = round2(state.dailyGoal || 0);
-  const dailySessions = getRollingDailySessions(state.savedSessions);
-  const dailyTotal = round2(dailySessions.reduce((a,b)=>a+b.profit,0));
-  document.getElementById("dailyGoalValue").textContent = fmt(dailyGoal);
-  document.getElementById("dailyTotalValue").textContent = fmt(dailyTotal);
+  const dailyTotal = round2(getRollingDailySessions(state.savedSessions).reduce((a,b)=>a+b.profit,0));
   const dailyLeft = Math.max(0, round2(dailyGoal - dailyTotal));
-  document.getElementById("dailyLeft").textContent = dailyLeft === 0 ? "Goal reached" : fmt(dailyLeft) + " left";
-  document.getElementById("pDaily").style.width = (dailyGoal > 0 ? Math.max(0, Math.min(100, (dailyTotal / dailyGoal) * 100)) : 0) + "%";
+  document.getElementById('dailyGoalValue').textContent = fmt(dailyGoal);
+  document.getElementById('dailyTotalValue').textContent = fmt(dailyTotal);
+  document.getElementById('dailyLeft').textContent = dailyLeft === 0 ? 'Goal reached' : fmt(dailyLeft) + ' left';
+  document.getElementById('pDaily').style.width = (dailyGoal > 0 ? Math.max(0, Math.min(100, (dailyTotal / dailyGoal) * 100)) : 0) + '%';
 
   const weeklyGoal = round2(state.weeklyGoal || 0);
-  const weeklySessions = getRollingWeeklySessions(state.savedSessions);
-  const weeklyTotal = round2(weeklySessions.reduce((a,b)=>a+b.profit,0));
-  document.getElementById("weeklyGoalValue").textContent = fmt(weeklyGoal);
-  document.getElementById("weeklyTotalValue").textContent = fmt(weeklyTotal);
+  const weeklyTotal = round2(getRollingWeeklySessions(state.savedSessions).reduce((a,b)=>a+b.profit,0));
   const weeklyLeft = Math.max(0, round2(weeklyGoal - weeklyTotal));
-  document.getElementById("weeklyLeft").textContent = weeklyLeft === 0 ? "Goal reached" : fmt(weeklyLeft) + " left";
-  document.getElementById("pWeekly").style.width = (weeklyGoal > 0 ? Math.max(0, Math.min(100, (weeklyTotal / weeklyGoal) * 100)) : 0) + "%";
+  document.getElementById('weeklyGoalValue').textContent = fmt(weeklyGoal);
+  document.getElementById('weeklyTotalValue').textContent = fmt(weeklyTotal);
+  document.getElementById('weeklyLeft').textContent = weeklyLeft === 0 ? 'Goal reached' : fmt(weeklyLeft) + ' left';
+  document.getElementById('pWeekly').style.width = (weeklyGoal > 0 ? Math.max(0, Math.min(100, (weeklyTotal / weeklyGoal) * 100)) : 0) + '%';
 }
 
 function getSessionPoints(){
-  const points = [{x:0, y:round2(state.startingBankroll)}];
-  const ordered = state.spins.slice().reverse();
-  ordered.forEach((spin, idx) => points.push({x: idx+1, y: round2(spin.bankrollAfter)}));
+  const points = [{x:0, y:round2(state.startingBankroll || 0)}];
+  state.spins.slice().reverse().forEach((spin, idx)=>points.push({x:idx+1, y:round2(spin.bankrollAfter)}));
   return points;
 }
-function getGrowthPoints(){
-  return state.savedSessions.map((s, idx) => ({x: idx+1, y: round2(s.end)}));
-}
+function getGrowthPoints(){ return state.savedSessions.map((s, idx)=>({x:idx+1,y:round2(s.end)})); }
 function getBounds(values, fallback){
-  const arr = values.length ? values : [fallback];
-  const min = Math.floor(Math.min(...arr) - 5);
-  const max = Math.ceil(Math.max(...arr) + 5);
+  const arr = values.length ? values : [fallback || 0];
+  const min = Math.floor(Math.min(...arr) - 1);
+  const max = Math.ceil(Math.max(...arr) + 1);
   return {min, max};
 }
-
-function initCharts(){
-  const sessionCtx = document.getElementById("bankrollChart").getContext("2d");
-  bankrollChart = new Chart(sessionCtx, {
-    type:"line",
-    data:{datasets:[{
-      data: getSessionPoints(),
-      borderColor:"#3b82f6",
-      backgroundColor:"rgba(59,130,246,.16)",
-      borderWidth:3,
-      pointRadius:3,
-      tension:0.4,
-      fill:true
-    }]},
+function sessionChartColors(){
+  const profit = round2(state.bankroll - state.startingBankroll);
+  if(profit > 0) return {line:'#43d17c', fill:'rgba(67,209,124,.18)'};
+  if(profit < 0) return {line:'#ff5b6d', fill:'rgba(255,91,109,.18)'};
+  return {line:'#4990ff', fill:'rgba(73,144,255,.18)'};
+}
+function growthChartColors(){
+  const last = state.savedSessions[state.savedSessions.length - 1];
+  if(!last || last.profit === 0) return {line:'#4990ff', fill:'rgba(73,144,255,.16)'};
+  return last.profit > 0 ? {line:'#43d17c', fill:'rgba(67,209,124,.16)'} : {line:'#ff5b6d', fill:'rgba(255,91,109,.16)'};
+}
+function buildChart(ctx, colors){
+  return new Chart(ctx, {
+    type:'line',
+    data:{datasets:[{data:[], borderColor:colors.line, backgroundColor:colors.fill, borderWidth:3, pointRadius:3, pointHoverRadius:4, tension:.38, fill:true}]},
     options:{
       responsive:true,
-      maintainAspectRatio:true,
-      plugins:{legend:{display:false}},
+      maintainAspectRatio:false,
+      layout:{padding:0},
+      animation:false,
+      plugins:{legend:{display:false}, tooltip:{enabled:true}},
       scales:{
-        x:{type:"linear", min:0, ticks:{precision:0,color:"#94a3b8"}, grid:{color:"#334155"}},
-        y:{ticks:{color:"#94a3b8", callback:v=>fmt(v)}, grid:{color:"#334155"}}
-      }
-    }
-  });
-
-  const growthCtx = document.getElementById("growthChart").getContext("2d");
-  growthChart = new Chart(growthCtx, {
-    type:"line",
-    data:{datasets:[{
-      data: getGrowthPoints(),
-      borderColor:"#22c55e",
-      backgroundColor:"rgba(34,197,94,.12)",
-      borderWidth:3,
-      pointRadius:4,
-      tension:0.4,
-      fill:true
-    }]},
-    options:{
-      responsive:true,
-      maintainAspectRatio:true,
-      plugins:{legend:{display:false}},
-      scales:{
-        x:{type:"linear", min:0, ticks:{precision:0,color:"#94a3b8"}, grid:{color:"#334155"}},
-        y:{ticks:{color:"#94a3b8", callback:v=>fmt(v)}, grid:{color:"#334155"}}
+        x:{type:'linear', min:0, ticks:{precision:0,color:'#9fb2d4', padding:4}, grid:{color:'rgba(126,154,201,.20)', drawBorder:false}, border:{display:false}},
+        y:{ticks:{color:'#9fb2d4', padding:4, callback:v=>fmt(v)}, grid:{color:'rgba(126,154,201,.20)', drawBorder:false}, border:{display:false}}
       }
     }
   });
 }
-
+function initCharts(){
+  bankrollChart = buildChart(document.getElementById('bankrollChart').getContext('2d'), sessionChartColors());
+  growthChart = buildChart(document.getElementById('growthChart').getContext('2d'), growthChartColors());
+}
 function updateCharts(){
+  const sColors = sessionChartColors();
   const sessionPts = getSessionPoints();
   bankrollChart.data.datasets[0].data = sessionPts;
-  let b = getBounds(sessionPts.map(p=>p.y), state.startingBankroll);
-  bankrollChart.options.scales.y.min = b.min;
-  bankrollChart.options.scales.y.max = b.max;
+  bankrollChart.data.datasets[0].borderColor = sColors.line;
+  bankrollChart.data.datasets[0].backgroundColor = sColors.fill;
+  const sb = getBounds(sessionPts.map(p=>p.y), state.startingBankroll);
+  bankrollChart.options.scales.y.min = sb.min;
+  bankrollChart.options.scales.y.max = sb.max;
   bankrollChart.update();
 
+  const gColors = growthChartColors();
   const growthPts = getGrowthPoints();
   growthChart.data.datasets[0].data = growthPts;
-  let g = getBounds(growthPts.map(p=>p.y), state.lastExitBankroll);
-  growthChart.options.scales.y.min = g.min;
-  growthChart.options.scales.y.max = g.max;
+  growthChart.data.datasets[0].borderColor = gColors.line;
+  growthChart.data.datasets[0].backgroundColor = gColors.fill;
+  const gb = getBounds(growthPts.map(p=>p.y), state.lastExitBankroll || state.bankroll);
+  growthChart.options.scales.y.min = gb.min;
+  growthChart.options.scales.y.max = gb.max;
   growthChart.update();
 }
 
 function updateUI(){
   const profit = round2(state.bankroll - state.startingBankroll);
+  document.getElementById('bankroll').textContent = fmt(state.bankroll);
+  document.getElementById('level').textContent = String(state.level);
+  document.getElementById('streakCount').textContent = String(state.streakCount);
+  const streakEl = document.getElementById('streakCount');
+  streakEl.style.color = state.streakCount > 0 ? 'var(--green)' : (state.streakCount < 0 ? 'var(--red)' : 'var(--text)');
+  document.getElementById('sessionHigh').textContent = fmt(state.sessionHigh);
+  document.getElementById('dozenBet').textContent = fmt(3 * state.level * state.baseUnit);
+  document.getElementById('streetBet').textContent = fmt(1 * state.level * state.baseUnit);
+  document.getElementById('totalBet').textContent = fmt(6 * state.level * state.baseUnit);
 
-  document.getElementById("bankroll").textContent = fmt(state.bankroll);
-  const sp = document.getElementById("sessionProfit");
-  sp.textContent = fmtSigned(profit);
-  sp.className = "value " + (profit >= 0 ? "pos" : "neg");
-  document.getElementById("level").textContent = String(state.level);
-  document.getElementById("sessionHigh").textContent = fmt(state.sessionHigh);
-  document.getElementById("dozenBet").textContent = fmt(3 * state.level * state.baseUnit);
-  document.getElementById("streetBet").textContent = fmt(1 * state.level * state.baseUnit);
-  document.getElementById("totalBet").textContent = fmt(6 * state.level * state.baseUnit);
+  const sp = document.getElementById('sessionProfit');
+  sp.textContent = 'Session Profit  ' + fmtSigned(profit);
+  sp.className = 'label ' + (profit >= 0 ? 'value-pos' : 'value-neg');
+  sp.style.fontSize = '16px';
+  sp.style.fontWeight = '800';
 
-  const [label, bg, color] = getStatus();
-  const badge = document.getElementById("statusBadge");
-  badge.textContent = label;
-  badge.style.background = bg;
-  badge.style.color = color;
+  const status = getStatus();
+  const sc = document.getElementById('statusChip');
+  sc.textContent = status.text;
+  sc.className = 'chip ' + (status.cls === 'green' ? 'green' : 'blue') + ' dot';
 
-  document.getElementById("targetMsg").style.display = state.targetLocked ? "block" : "none";
-  document.getElementById("unlockPlayBtn").style.display = state.targetLocked ? "block" : "none";
-  document.getElementById("recoveryMsg").style.display = state.recoveryMode ? "block" : "none";
+  const bp = document.getElementById('bankrollStatePill');
+  bp.textContent = state.targetLocked ? 'LOCKED' : (state.recoveryMode ? 'RECOVERY' : 'IN PLAY');
+  bp.className = 'chip ' + (state.targetLocked ? 'blue' : 'green') + ' dot';
+
+  document.getElementById('targetMsg').style.display = state.targetLocked ? 'block' : 'none';
+  document.getElementById('unlockPlayBtn').style.display = state.targetLocked ? 'block' : 'none';
+  document.getElementById('recoveryMsg').style.display = state.recoveryMode ? 'block' : 'none';
   setMainButtonsDisabled(state.targetLocked);
 
-  document.getElementById("startingBankrollInput").value = state.startingBankroll.toFixed(2);
-  document.getElementById("targetProfitInput").value = state.targetProfit.toFixed(2);
-  document.getElementById("baseUnitInput").value = state.baseUnit.toFixed(2);
+  document.getElementById('startingBankrollInput').value = state.startingBankroll ? state.startingBankroll.toFixed(2) : '';
+  document.getElementById('targetProfitInput').value = state.targetProfit.toFixed(2);
+  document.getElementById('baseUnitInput').value = state.baseUnit.toFixed(2);
 
   renderSpinLog();
   renderGoals();
@@ -823,15 +782,12 @@ function updateUI(){
 }
 
 loadState();
-window.addEventListener("DOMContentLoaded", () => {
+window.addEventListener('DOMContentLoaded', ()=>{
   initCharts();
   updateUI();
-  const overlayInput = document.getElementById("overlayBankrollInput");
-  document.getElementById("overlayStartBtn").addEventListener("click", startSessionFromOverlay);
-  overlayInput.addEventListener("keydown", (e) => {
-    if(e.key === "Enter") startSessionFromOverlay();
-  });
-  showStartOverlay();
+  document.getElementById('overlayStartBtn').addEventListener('click', startSessionFromOverlay);
+  document.getElementById('overlayBankrollInput').addEventListener('keydown', (e)=>{ if(e.key === 'Enter') startSessionFromOverlay(); });
+  if(state.startingBankroll > 0 && state.bankroll > 0) hideStartOverlay(); else showStartOverlay();
 });
 </script>
 </body>
