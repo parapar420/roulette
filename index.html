@@ -198,7 +198,7 @@
       <div class="grid2">
         <div class="stat">
           <div class="label">Bankroll</div>
-          <div id="bankroll" class="value">$105.40</div>
+          <div id="bankroll" class="value">$111.00</div>
         </div>
         <div class="stat">
           <div class="label">Session Profit</div>
@@ -210,7 +210,7 @@
         </div>
         <div class="stat">
           <div class="label">Session High</div>
-          <div id="sessionHigh" class="value">$105.40</div>
+          <div id="sessionHigh" class="value">$111.00</div>
         </div>
       </div>
 
@@ -339,9 +339,9 @@
 const storageKey = "rouletteTrackerAdvanced_v16_dark";
 
 const state = {
-  startingBankroll: 105.40,
-  bankroll: 105.40,
-  sessionHigh: 105.40,
+  startingBankroll: 111.00,
+  bankroll: 111.00,
+  sessionHigh: 111.00,
   targetProfit: 6.5,
   baseUnit: 0.10,
   level: 1,
@@ -351,7 +351,7 @@ const state = {
   historySnapshots: [],
   savedSessions: [],
   targetLocked: false,
-  lastExitBankroll: 105.40,
+  lastExitBankroll: 111.00,
   dailyGoal: 20.00,
   weeklyGoal: 100.00
 };
@@ -545,9 +545,9 @@ function factoryResetAll(){
   const ok = confirm("This will erase all local session history and current session data. Continue?");
   if(!ok) return;
   localStorage.removeItem(storageKey);
-  state.startingBankroll = 105.40;
-  state.bankroll = 105.40;
-  state.sessionHigh = 105.40;
+  state.startingBankroll = 111.00;
+  state.bankroll = 111.00;
+  state.sessionHigh = 111.00;
   state.targetProfit = 6.5;
   state.baseUnit = 0.10;
   state.level = 1;
@@ -557,7 +557,7 @@ function factoryResetAll(){
   state.historySnapshots = [];
   state.savedSessions = [];
   state.targetLocked = false;
-  state.lastExitBankroll = 105.40;
+  state.lastExitBankroll = 111.00;
   state.dailyGoal = 20.00;
   state.weeklyGoal = 100.00;
   document.getElementById("sessionNameInput").value = "";
