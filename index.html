@@ -2,534 +2,837 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Session Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Roulette Tracker Advanced V16 Dark</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    :root {
-      --bg: #0b1220;
-      --panel: #111827;
-      --panel-2: #1f2937;
-      --text: #f3f4f6;
-      --muted: #9ca3af;
-      --green: #22c55e;
-      --red: #ef4444;
-      --yellow: #f59e0b;
-      --border: rgba(255,255,255,0.08);
-      --shadow: 0 20px 40px rgba(0,0,0,0.35);
-      --radius: 22px;
+    :root{
+      --bg:#07111f;
+      --bg2:#0b1730;
+      --card:#0b1730;
+      --card2:#0f1d39;
+      --text:#f8fafc;
+      --muted:#94a3b8;
+      --line:#223252;
+      --blue:#1d8fe1;
+      --green:#2ac85f;
+      --green2:#3d5f0a;
+      --red:#b61f24;
+      --danger:#7a0d32;
+      --pill:#112344;
+      --shadow:0 12px 28px rgba(0,0,0,.28);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+      background:linear-gradient(180deg,var(--bg) 0%, var(--bg2) 100%);
+      color:var(--text);
+    }
+    .wrap{
+      max-width:760px;
+      margin:0 auto;
+      padding:16px 14px 40px;
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:24px;
+      padding:18px;
+      margin-bottom:14px;
+      box-shadow:var(--shadow);
+    }
+    .row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .title{
+      font-size:24px;
+      font-weight:800;
+      line-height:1.1;
+      letter-spacing:-.02em;
+    }
+    .badge{
+      padding:10px 14px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+      white-space:nowrap;
+      background:#12305b;
+      color:#6aa9ff;
+    }
+    .grid2,.grid3,.grid4{
+      display:grid;
+      gap:12px;
+    }
+    .grid2{grid-template-columns:repeat(2,1fr)}
+    .grid3{grid-template-columns:repeat(3,1fr)}
+    .grid4{grid-template-columns:repeat(4,1fr)}
+    .stat{
+      background:var(--card2);
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:16px;
+    }
+    .label{
+      font-size:12px;
+      color:var(--muted);
+      margin-bottom:8px;
+    }
+    .value{
+      font-size:28px;
+      font-weight:800;
+      letter-spacing:-.03em;
+    }
+    .value.small{font-size:18px}
+    .pos{color:var(--green)}
+    .neg{color:#ff6b6b}
+    input{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+      font-size:16px;
+      background:#08142a;
+      color:var(--text);
+      outline:none;
+    }
+    input:disabled{
+      opacity:.6;
+    }
+    .section-title{
+      font-size:18px;
+      font-weight:800;
+      margin-bottom:12px;
+    }
+    button{
+      appearance:none;
+      border:none;
+      border-radius:22px;
+      padding:16px 14px;
+      font-size:17px;
+      font-weight:800;
+      cursor:pointer;
+      width:100%;
+      color:#fff;
+    }
+    button:disabled{opacity:.5;cursor:not-allowed}
+    .btn-dozen{background:#125a85}
+    .btn-street{background:#486d0d}
+    .btn-miss{background:#a31b1f}
+    .btn-secondary{background:#364965}
+    .btn-outline{background:#08142a;border:1px solid var(--line)}
+    .btn-danger{background:#7a0d32}
+    .note{
+      border-radius:18px;
+      padding:12px;
+      font-size:14px;
+      line-height:1.35;
+      border:1px solid var(--line);
+      background:#0a2a4c;
+      color:#9cc3ff;
+    }
+    .progress{
+      height:12px;
+      background:#31425f;
+      border-radius:999px;
+      overflow:hidden;
+      margin-top:6px;
+    }
+    .progress > div{
+      height:100%;
+      width:0%;
+      background:#3b82f6;
+    }
+    .kpi{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      margin-top:8px;
+      font-size:14px;
+    }
+    .pill{
+      background:var(--pill);
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+      color:#e5e7eb;
+    }
+    .log{
+      max-height:320px;
+      overflow:auto;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .log-item{
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:12px;
+      background:var(--card2);
+    }
+    .muted{color:var(--muted);font-size:12px}
+    .footer-space{height:10px}
+    canvas{display:block;width:100% !important}
+    @media (max-width:560px){
+      .grid4{grid-template-columns:repeat(2,1fr)}
+      .value{font-size:24px}
+      .title{font-size:22px}
+    }
+  
+    #startOverlay{
+      position:fixed;
+      inset:0;
+      background:linear-gradient(180deg, rgba(7,17,31,.98) 0%, rgba(11,23,48,.98) 100%);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:9999;
+      padding:18px;
+    }
+    #startOverlay.hidden{display:none}
+    .overlay-card{
+      width:min(100%,420px);
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:28px;
+      padding:22px;
+      box-shadow:var(--shadow);
+    }
+    .overlay-title{
+      font-size:28px;
+      font-weight:800;
+      letter-spacing:-.03em;
+      margin:0 0 10px;
+      line-height:1.05;
+    }
+    .overlay-sub{
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.4;
+      margin:0 0 18px;
+    }
+    .overlay-error{
+      color:#fca5a5;
+      font-size:13px;
+      min-height:18px;
+      margin-top:8px;
     }
 
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: linear-gradient(180deg, #071019 0%, #0b1220 100%);
-      color: var(--text);
-      min-height: 100vh;
-    }
-
-    .app {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 24px 16px 40px;
-    }
-
-    .card {
-      background: rgba(17,24,39,0.92);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(10px);
-    }
-
-    .gate {
-      min-height: calc(100vh - 64px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .gate-panel {
-      width: 100%;
-      padding: 28px;
-    }
-
-    h1, h2, h3, p { margin: 0; }
-
-    .title {
-      font-size: 1.9rem;
-      font-weight: 800;
-      margin-bottom: 8px;
-      letter-spacing: -0.02em;
-    }
-
-    .subtitle {
-      color: var(--muted);
-      line-height: 1.45;
-      margin-bottom: 22px;
-    }
-
-    label {
-      display: block;
-      font-size: 0.95rem;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
-
-    input[type="number"] {
-      width: 100%;
-      padding: 16px 18px;
-      border-radius: 16px;
-      border: 1px solid var(--border);
-      background: #0f172a;
-      color: var(--text);
-      font-size: 1.2rem;
-      outline: none;
-    }
-
-    input[type="number"]:focus {
-      border-color: rgba(34,197,94,0.6);
-      box-shadow: 0 0 0 4px rgba(34,197,94,0.12);
-    }
-
-    .btn-row,
-    .grid,
-    .summary-grid {
-      display: grid;
-      gap: 12px;
-    }
-
-    .btn-row { grid-template-columns: 1fr; margin-top: 18px; }
-
-    button {
-      border: none;
-      border-radius: 16px;
-      padding: 15px 16px;
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: transform 0.08s ease, opacity 0.2s ease;
-    }
-
-    button:active { transform: scale(0.98); }
-
-    .primary { background: var(--green); color: #04110a; }
-    .secondary { background: #1f2937; color: var(--text); }
-    .danger { background: var(--red); color: white; }
-    .warn { background: var(--yellow); color: #1c1402; }
-
-    button:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-    }
-
-    .hidden { display: none !important; }
-
-    .top-card {
-      padding: 24px;
-      margin-bottom: 18px;
-    }
-
-    .kicker {
-      color: var(--muted);
-      font-size: 0.88rem;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    .bankroll {
-      font-size: 3rem;
-      font-weight: 900;
-      letter-spacing: -0.04em;
-      margin-bottom: 8px;
-    }
-
-    .bankroll.positive { color: var(--green); }
-    .bankroll.negative { color: var(--red); }
-    .bankroll.neutral { color: var(--text); }
-
-    .delta {
-      font-size: 1rem;
-      font-weight: 700;
-    }
-
-    .delta.positive { color: var(--green); }
-    .delta.negative { color: var(--red); }
-    .delta.neutral { color: var(--muted); }
-
-    .grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      margin-bottom: 18px;
-    }
-
-    .mini-card {
-      padding: 18px;
-    }
-
-    .mini-label {
-      color: var(--muted);
-      font-size: 0.9rem;
-      margin-bottom: 6px;
-    }
-
-    .mini-value {
-      font-size: 1.45rem;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-    }
-
-    .action-card {
-      padding: 20px;
-      margin-bottom: 18px;
-    }
-
-    .action-title {
-      font-size: 1.1rem;
-      font-weight: 800;
-      margin-bottom: 14px;
-    }
-
-    .bankroll-input-row {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
-    }
-
-    .warning {
-      margin-top: 14px;
-      border-radius: 16px;
-      padding: 14px 16px;
-      font-weight: 700;
-      background: rgba(245,158,11,0.14);
-      border: 1px solid rgba(245,158,11,0.35);
-      color: #fbbf24;
-    }
-
-    .footer-actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.65);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-    }
-
-    .modal {
-      width: 100%;
-      max-width: 520px;
-      padding: 24px;
-    }
-
-    .summary-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      margin: 18px 0;
-    }
-
-    .summary-item {
-      background: #0f172a;
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 16px;
-    }
-
-    .summary-label {
-      color: var(--muted);
-      font-size: 0.9rem;
-      margin-bottom: 6px;
-    }
-
-    .summary-value {
-      font-size: 1.3rem;
-      font-weight: 800;
-    }
-
-    .summary-message {
-      margin-bottom: 14px;
-      font-size: 1rem;
-      font-weight: 800;
-    }
-
-    .summary-message.positive { color: var(--green); }
-    .summary-message.negative { color: var(--yellow); }
-
-    .tiny {
-      color: var(--muted);
-      font-size: 0.85rem;
-      margin-top: 12px;
-      line-height: 1.4;
-    }
-
-    @media (max-width: 640px) {
-      .grid,
-      .summary-grid,
-      .footer-actions { grid-template-columns: 1fr; }
-
-      .bankroll { font-size: 2.5rem; }
-      .app { padding: 16px 14px 28px; }
-      .gate-panel, .top-card, .action-card, .mini-card, .modal { padding: 20px; }
-    }
   </style>
 </head>
 <body>
-  <div class="app">
-    <section id="gateScreen" class="gate">
-      <div class="card gate-panel">
-        <h1 class="title">Start New Session</h1>
-        <p class="subtitle">Enter your starting bankroll before the app unlocks. This makes every session begin clean.</p>
 
-        <label for="sessionStartInput">Starting bankroll</label>
-        <input id="sessionStartInput" type="number" step="0.01" min="0" placeholder="116.7" />
-
-        <div class="btn-row">
-          <button id="startSessionBtn" class="primary" disabled>Start Session</button>
-        </div>
-      </div>
-    </section>
-
-    <section id="mainScreen" class="hidden">
-      <div class="card top-card">
-        <div class="kicker">Current bankroll</div>
-        <div id="currentBankrollDisplay" class="bankroll neutral">$0.00</div>
-        <div id="sessionDeltaDisplay" class="delta neutral">$0.00 this session</div>
-      </div>
-
-      <div class="grid">
-        <div class="card mini-card">
-          <div class="mini-label">Session Start</div>
-          <div id="sessionStartDisplay" class="mini-value">$0.00</div>
-        </div>
-        <div class="card mini-card">
-          <div class="mini-label">Session High</div>
-          <div id="sessionHighDisplay" class="mini-value">$0.00</div>
-        </div>
-        <div class="card mini-card">
-          <div class="mini-label">+5% Target</div>
-          <div id="target5Display" class="mini-value">$0.00</div>
-        </div>
-        <div class="card mini-card">
-          <div class="mini-label">+10% Target</div>
-          <div id="target10Display" class="mini-value">$0.00</div>
-        </div>
-      </div>
-
-      <div class="card action-card">
-        <div class="action-title">Update bankroll</div>
-        <div class="bankroll-input-row">
-          <input id="currentBankrollInput" type="number" step="0.01" min="0" placeholder="Enter current bankroll" />
-          <button id="saveBankrollBtn" class="primary">Save Current Bankroll</button>
-        </div>
-        <div id="peakWarning" class="warning hidden"></div>
-        <div class="tiny">Tip: change only the current bankroll. Session start stays locked for the whole session.</div>
-      </div>
-
-      <div class="footer-actions">
-        <button id="endSessionBtn" class="warn">End Session</button>
-        <button id="newSessionBtn" class="secondary">New Session</button>
-      </div>
-    </section>
-  </div>
-
-  <div id="summaryModalBackdrop" class="modal-backdrop hidden">
-    <div class="card modal">
-      <h2 class="title" style="font-size:1.6rem; margin-bottom:8px;">Session Summary</h2>
-      <div id="summaryMessage" class="summary-message">Session complete</div>
-      <div class="summary-grid">
-        <div class="summary-item">
-          <div class="summary-label">Start</div>
-          <div id="summaryStart" class="summary-value">$0.00</div>
-        </div>
-        <div class="summary-item">
-          <div class="summary-label">End</div>
-          <div id="summaryEnd" class="summary-value">$0.00</div>
-        </div>
-        <div class="summary-item">
-          <div class="summary-label">Profit / Loss</div>
-          <div id="summaryProfit" class="summary-value">$0.00</div>
-        </div>
-        <div class="summary-item">
-          <div class="summary-label">Peak</div>
-          <div id="summaryPeak" class="summary-value">$0.00</div>
-        </div>
-      </div>
-      <div class="footer-actions">
-        <button id="closeSummaryBtn" class="secondary">Close</button>
-        <button id="startFreshBtn" class="primary">Start New Session</button>
-      </div>
+  <div id="startOverlay">
+    <div class="overlay-card">
+      <div class="overlay-title">Start Session</div>
+      <p class="overlay-sub">Enter your current bankroll to begin. The app will stay locked until you set it.</p>
+      <div class="label">Starting Bankroll</div>
+      <input id="overlayBankrollInput" type="number" step="0.01" inputmode="decimal" placeholder="116.70" />
+      <div class="overlay-error" id="overlayError"></div>
+      <button id="overlayStartBtn" class="btn-secondary" style="margin-top:8px;">Start Session</button>
     </div>
   </div>
 
-  <script>
-    const gateScreen = document.getElementById('gateScreen');
-    const mainScreen = document.getElementById('mainScreen');
-    const sessionStartInput = document.getElementById('sessionStartInput');
-    const startSessionBtn = document.getElementById('startSessionBtn');
-    const currentBankrollInput = document.getElementById('currentBankrollInput');
-    const saveBankrollBtn = document.getElementById('saveBankrollBtn');
-    const peakWarning = document.getElementById('peakWarning');
-    const endSessionBtn = document.getElementById('endSessionBtn');
-    const newSessionBtn = document.getElementById('newSessionBtn');
+  <div class="wrap">
 
-    const currentBankrollDisplay = document.getElementById('currentBankrollDisplay');
-    const sessionDeltaDisplay = document.getElementById('sessionDeltaDisplay');
-    const sessionStartDisplay = document.getElementById('sessionStartDisplay');
-    const sessionHighDisplay = document.getElementById('sessionHighDisplay');
-    const target5Display = document.getElementById('target5Display');
-    const target10Display = document.getElementById('target10Display');
+    <!-- 1. MAIN TRACKER -->
+    <div class="card">
+      <div class="row" style="margin-bottom:14px;">
+        <div class="title">Roulette Tracker<br>Advanced V16 Dark</div>
+        <div id="statusBadge" class="badge">Normal</div>
+      </div>
 
-    const summaryModalBackdrop = document.getElementById('summaryModalBackdrop');
-    const summaryMessage = document.getElementById('summaryMessage');
-    const summaryStart = document.getElementById('summaryStart');
-    const summaryEnd = document.getElementById('summaryEnd');
-    const summaryProfit = document.getElementById('summaryProfit');
-    const summaryPeak = document.getElementById('summaryPeak');
-    const closeSummaryBtn = document.getElementById('closeSummaryBtn');
-    const startFreshBtn = document.getElementById('startFreshBtn');
+      <div class="grid2">
+        <div class="stat">
+          <div class="label">Bankroll</div>
+          <div id="bankroll" class="value">$106.40</div>
+        </div>
+        <div class="stat">
+          <div class="label">Session Profit</div>
+          <div id="sessionProfit" class="value pos">+$0.00</div>
+        </div>
+        <div class="stat">
+          <div class="label">Level</div>
+          <div id="level" class="value">1</div>
+        </div>
+        <div class="stat">
+          <div class="label">Session High</div>
+          <div id="sessionHigh" class="value">$106.40</div>
+        </div>
+      </div>
 
-    let state = {
-      sessionStart: null,
-      currentBankroll: null,
-      sessionHigh: null,
-      target5: null,
-      target10: null
-    };
+      <div style="height:12px"></div>
 
-    function money(value) {
-      return `$${Number(value).toFixed(2)}`;
+      <div class="grid3">
+        <div class="stat">
+          <div class="label">Dozen Bet</div>
+          <div id="dozenBet" class="value small">$0.30</div>
+        </div>
+        <div class="stat">
+          <div class="label">Each Street</div>
+          <div id="streetBet" class="value small">$0.10</div>
+        </div>
+        <div class="stat">
+          <div class="label">Total Bet</div>
+          <div id="totalBet" class="value small">$0.60</div>
+        </div>
+      </div>
+
+      <div style="height:14px"></div>
+
+      <div class="grid2">
+        <button id="btnDozen" class="btn-dozen" onclick="processSpin('dozen')">Dozen Hit</button>
+        <button id="btnStreet" class="btn-street" onclick="processSpin('street')">Street Hit</button>
+      </div>
+      <div style="height:10px"></div>
+      <button id="btnMiss" class="btn-miss" onclick="processSpin('miss')">Miss / Loss</button>
+
+      <div id="targetMsg" class="note" style="display:none; margin-top:12px;">
+        Target reached. Buttons are locked. Cash out or unlock only if you truly want to continue.
+      </div>
+      <div style="height:10px"></div>
+      <button id="unlockPlayBtn" class="btn-outline" onclick="unlockAfterTarget()" style="display:none;">Unlock & Continue Playing</button>
+      <div id="recoveryMsg" class="note" style="display:none; margin-top:10px;">Recovery mode active.</div>
+    </div>
+
+    <!-- 2. WEEKLY/DAILY GOALS -->
+    <div class="card">
+      <div class="section-title">Weekly Goal</div>
+
+      <div class="grid2">
+        <div class="stat">
+          <div class="label">Weekly Goal</div>
+          <div id="weeklyGoalValue" class="value small">$100.00</div>
+        </div>
+        <div class="stat">
+          <div class="label">Last 7 Days</div>
+          <div id="weeklyTotalValue" class="value small">$0.00</div>
+        </div>
+        <div class="stat">
+          <div class="label">Daily Goal</div>
+          <div id="dailyGoalValue" class="value small">$20.00</div>
+        </div>
+        <div class="stat">
+          <div class="label">Last 24 Hours</div>
+          <div id="dailyTotalValue" class="value small">$0.00</div>
+        </div>
+      </div>
+
+      <div class="kpi"><span class="muted">Daily progress</span><span id="dailyLeft" class="pill">$20.00 left</span></div>
+      <div class="progress"><div id="pDaily"></div></div>
+
+      <div class="kpi" style="margin-top:16px;"><span class="muted">7-day progress</span><span id="weeklyLeft" class="pill">$100.00 left</span></div>
+      <div class="progress"><div id="pWeekly"></div></div>
+    </div>
+
+    <!-- 3. SESSION GRAPH -->
+    <div class="card">
+      <div class="section-title">Session Graph</div>
+      <div style="position:relative;width:100%;aspect-ratio:1/1;">
+        <canvas id="bankrollChart"></canvas>
+      </div>
+    </div>
+
+    <!-- 4. SPIN LOG -->
+    <div class="card">
+      <div class="section-title">Spin Log</div>
+      <div id="spinLog" class="log"></div>
+    </div>
+
+    <!-- 5. GROWTH CHART -->
+    <div class="card">
+      <div class="section-title">Growth Mode</div>
+      <div style="position:relative;width:100%;aspect-ratio:16/10;">
+        <canvas id="growthChart"></canvas>
+      </div>
+    </div>
+
+    <!-- 6. SESSION SETTINGS -->
+    <div class="card">
+      <div class="section-title">Session Settings</div>
+      <div class="grid2">
+        <div>
+          <div class="label">Start Bankroll</div>
+          <input id="startingBankrollInput" type="number" step="0.01" />
+        </div>
+        <div>
+          <div class="label">Target Profit</div>
+          <input id="targetProfitInput" type="number" step="0.10" />
+        </div>
+        <div>
+          <div class="label">Base Unit</div>
+          <input id="baseUnitInput" type="number" step="0.01" />
+        </div>
+        <div>
+          <div class="label">Session Name</div>
+          <input id="sessionNameInput" type="text" placeholder="Optional" />
+        </div>
+      </div>
+
+      <div style="height:12px"></div>
+
+      <div class="grid2">
+        <button class="btn-secondary" onclick="resetSession()">Reset Session</button>
+        <button class="btn-outline" onclick="startFromCurrent()">Start From Current</button>
+        <button class="btn-danger" onclick="finishAndSaveSession()">Finish & Save Session</button>
+        <button class="btn-danger" onclick="factoryResetAll()">Factory Reset All Data</button>
+      </div>
+    </div>
+
+    <div class="footer-space"></div>
+  </div>
+
+<script>
+const storageKey = "rouletteTrackerAdvanced_v16_dark";
+
+const state = {
+  startingBankroll: 0,
+  bankroll: 0,
+  sessionHigh: 0,
+  targetProfit: 6.5,
+  baseUnit: 0.10,
+  level: 1,
+  dozenWinChain: 0,
+  recoveryMode: false,
+  spins: [],
+  historySnapshots: [],
+  savedSessions: [],
+  targetLocked: false,
+  lastExitBankroll: 0,
+  dailyGoal: 20.00,
+  weeklyGoal: 100.00
+};
+
+let bankrollChart = null;
+let growthChart = null;
+
+function fmt(n){ return "$" + Number(n).toFixed(2); }
+function fmtSigned(n){ return (n >= 0 ? "+" : "-") + fmt(Math.abs(n)); }
+function round2(n){ return Math.round(n * 100) / 100; }
+
+
+function showStartOverlay(){
+  document.getElementById("startOverlay").classList.remove("hidden");
+  const input = document.getElementById("overlayBankrollInput");
+  input.value = "";
+  document.getElementById("overlayError").textContent = "";
+  setTimeout(()=>input.focus(), 30);
+}
+function hideStartOverlay(){
+  document.getElementById("startOverlay").classList.add("hidden");
+}
+function applyStartingBankroll(value){
+  const amount = round2(Number(value));
+  state.startingBankroll = amount;
+  state.bankroll = amount;
+  state.sessionHigh = amount;
+  state.lastExitBankroll = amount;
+  state.level = 1;
+  state.dozenWinChain = 0;
+  state.recoveryMode = false;
+  state.targetLocked = false;
+  state.spins = [];
+  state.historySnapshots = [];
+  document.getElementById("sessionNameInput").value = "";
+  updateUI();
+  hideStartOverlay();
+}
+function startSessionFromOverlay(){
+  const raw = document.getElementById("overlayBankrollInput").value.trim();
+  const value = Number(raw);
+  if(!raw || !Number.isFinite(value) || value <= 0){
+    document.getElementById("overlayError").textContent = "Enter a valid bankroll greater than 0.";
+    return;
+  }
+  applyStartingBankroll(value);
+}
+
+function saveState(){
+  localStorage.setItem(storageKey, JSON.stringify(state));
+}
+function loadState(){
+  const raw = localStorage.getItem(storageKey);
+  if(!raw) return;
+  try{
+    const data = JSON.parse(raw);
+    Object.assign(state, data);
+  }catch(e){}
+}
+function getStatus(){
+  const profit = state.bankroll - state.startingBankroll;
+  if (state.targetLocked) return ["Locked - cash out", "#0b2545", "#93c5fd"];
+  if (profit >= state.targetProfit) return ["Target hit", "#052e16", "#86efac"];
+  if (state.recoveryMode) return ["Recovery mode", "#422006", "#fdba74"];
+  if (state.level >= 8) return ["High risk", "#3b0a0a", "#fca5a5"];
+  if (state.level >= 5) return ["Watch zone", "#3a2605", "#fcd34d"];
+  return ["Normal", "#12305b", "#6aa9ff"];
+}
+function takeSnapshot(){
+  state.historySnapshots.unshift(JSON.parse(JSON.stringify({
+    startingBankroll: state.startingBankroll,
+    bankroll: state.bankroll,
+    sessionHigh: state.sessionHigh,
+    targetProfit: state.targetProfit,
+    baseUnit: state.baseUnit,
+    level: state.level,
+    dozenWinChain: state.dozenWinChain,
+    recoveryMode: state.recoveryMode,
+    targetLocked: state.targetLocked,
+    lastExitBankroll: state.lastExitBankroll,
+    spins: state.spins,
+    savedSessions: state.savedSessions
+  })));
+}
+function setMainButtonsDisabled(disabled){
+  document.getElementById("btnDozen").disabled = disabled;
+  document.getElementById("btnStreet").disabled = disabled;
+  document.getElementById("btnMiss").disabled = disabled;
+}
+function lockTargetIfNeeded(){
+  const profit = round2(state.bankroll - state.startingBankroll);
+  if(!state.targetLocked && profit >= state.targetProfit){
+    state.targetLocked = true;
+    state.lastExitBankroll = state.bankroll;
+  }
+}
+function unlockAfterTarget(){
+  state.targetLocked = false;
+  updateUI();
+}
+
+function appendSpin(result, delta, note, levelBefore){
+  state.spins.unshift({
+    spin: state.spins.length + 1,
+    levelBefore,
+    result,
+    delta: round2(delta),
+    bankrollAfter: round2(state.bankroll),
+    highAfter: round2(state.sessionHigh),
+    note,
+    timestamp: Date.now()
+  });
+}
+
+function processSpin(result){
+  if(state.targetLocked) return;
+  takeSnapshot();
+
+  const levelBefore = state.level;
+  let delta = 0;
+  let note = "";
+
+  if(result === "miss"){
+    delta = -6 * state.level * state.baseUnit;
+    state.level += 1;
+    state.dozenWinChain = 0;
+    note = "Loss: up 1 level";
+  } else if(result === "street"){
+    delta = 6 * state.level * state.baseUnit;
+    state.level = Math.max(1, state.level - 1);
+    state.dozenWinChain = 0;
+    note = "Street hit: down 1 level";
+  } else if(result === "dozen"){
+    delta = 3 * state.level * state.baseUnit;
+    if(state.dozenWinChain >= 1){
+      state.level = Math.max(1, state.level - 1);
+      state.dozenWinChain = 0;
+      note = "Second dozen win: down 1 level";
+    } else {
+      state.dozenWinChain = 1;
+      note = "First dozen win: stay same level";
     }
+  }
 
-    function validNumber(value) {
-      return Number.isFinite(value) && value >= 0;
-    }
+  state.bankroll = round2(state.bankroll + delta);
 
-    function updateStartButton() {
-      const value = parseFloat(sessionStartInput.value);
-      startSessionBtn.disabled = !validNumber(value);
-    }
+  if(state.bankroll > state.sessionHigh){
+    state.sessionHigh = state.bankroll;
+    state.level = 1;
+    state.dozenWinChain = 0;
+    note = "New session high: reset to level 1";
+  }
 
-    function openMainScreen() {
-      gateScreen.classList.add('hidden');
-      mainScreen.classList.remove('hidden');
-    }
+  if(!state.recoveryMode && state.bankroll < round2(state.startingBankroll * 0.55)){
+    state.recoveryMode = true;
+    note += (note ? " • " : "") + "Enter recovery mode";
+  }
 
-    function openGateScreen() {
-      gateScreen.classList.remove('hidden');
-      mainScreen.classList.add('hidden');
-      sessionStartInput.value = '';
-      currentBankrollInput.value = '';
-      peakWarning.classList.add('hidden');
-      updateStartButton();
-    }
+  lockTargetIfNeeded();
+  appendSpin(result, delta, note, levelBefore);
+  updateUI();
+}
 
-    function resetState() {
-      state = {
-        sessionStart: null,
-        currentBankroll: null,
-        sessionHigh: null,
-        target5: null,
-        target10: null
-      };
-    }
+function autoSaveCurrentSession(reason){
+  if(state.spins.length === 0) return;
+  const profit = round2(state.bankroll - state.startingBankroll);
+  const nameField = document.getElementById("sessionNameInput");
+  const name = nameField ? nameField.value.trim() : "";
+  const sessionRecord = {
+    name: name || ("Auto Saved - " + reason),
+    date: new Date().toISOString().slice(0,10),
+    timestamp: Date.now(),
+    start: round2(state.startingBankroll),
+    end: round2(state.bankroll),
+    profit,
+    spins: state.spins.length
+  };
+  const last = state.savedSessions[state.savedSessions.length - 1];
+  const isDuplicate = last &&
+    last.timestamp === sessionRecord.timestamp &&
+    last.start === sessionRecord.start &&
+    last.end === sessionRecord.end;
+  if(!isDuplicate){
+    state.savedSessions.push(sessionRecord);
+  }
+  state.lastExitBankroll = round2(state.bankroll);
+  if(nameField) nameField.value = "";
+}
 
-    function startSession() {
-      const start = parseFloat(sessionStartInput.value);
-      if (!validNumber(start)) return;
+function resetSession(){
+  autoSaveCurrentSession("Reset");
+  state.startingBankroll = round2(state.lastExitBankroll);
+  state.targetProfit = Number(document.getElementById("targetProfitInput").value || state.targetProfit);
+  state.baseUnit = Number(document.getElementById("baseUnitInput").value || state.baseUnit);
+  state.bankroll = round2(state.lastExitBankroll);
+  state.sessionHigh = round2(state.lastExitBankroll);
+  state.level = 1;
+  state.dozenWinChain = 0;
+  state.recoveryMode = false;
+  state.targetLocked = false;
+  state.spins = [];
+  state.historySnapshots = [];
+  updateUI();
+}
 
-      state.sessionStart = start;
-      state.currentBankroll = start;
-      state.sessionHigh = start;
-      state.target5 = start * 1.05;
-      state.target10 = start * 1.10;
+function startFromCurrent(){
+  autoSaveCurrentSession("Start From Current");
+  state.targetProfit = Number(document.getElementById("targetProfitInput").value || state.targetProfit);
+  state.baseUnit = Number(document.getElementById("baseUnitInput").value || state.baseUnit);
+  state.startingBankroll = round2(state.bankroll);
+  state.lastExitBankroll = round2(state.bankroll);
+  state.sessionHigh = round2(state.bankroll);
+  state.level = 1;
+  state.dozenWinChain = 0;
+  state.recoveryMode = false;
+  state.targetLocked = false;
+  state.spins = [];
+  state.historySnapshots = [];
+  updateUI();
+}
 
-      currentBankrollInput.value = start.toFixed(2);
-      render();
-      openMainScreen();
-    }
+function finishAndSaveSession(){
+  autoSaveCurrentSession("Manual Save");
+  updateUI();
+}
 
-    function render() {
-      const delta = state.currentBankroll - state.sessionStart;
-      const peakDrop = state.sessionHigh - state.currentBankroll;
+function factoryResetAll(){
+  const ok = confirm("This will erase all local session history and current session data. Continue?");
+  if(!ok) return;
+  localStorage.removeItem(storageKey);
+  state.startingBankroll = 0;
+  state.bankroll = 0;
+  state.sessionHigh = 0;
+  state.targetProfit = 6.5;
+  state.baseUnit = 0.10;
+  state.level = 1;
+  state.dozenWinChain = 0;
+  state.recoveryMode = false;
+  state.spins = [];
+  state.historySnapshots = [];
+  state.savedSessions = [];
+  state.targetLocked = false;
+  state.lastExitBankroll = 0;
+  state.dailyGoal = 20.00;
+  state.weeklyGoal = 100.00;
+  document.getElementById("sessionNameInput").value = "";
+  updateUI();
+}
 
-      currentBankrollDisplay.textContent = money(state.currentBankroll);
-      sessionStartDisplay.textContent = money(state.sessionStart);
-      sessionHighDisplay.textContent = money(state.sessionHigh);
-      target5Display.textContent = money(state.target5);
-      target10Display.textContent = money(state.target10);
+function renderSpinLog(){
+  const box = document.getElementById("spinLog");
+  if(state.spins.length === 0){
+    box.innerHTML = '<div class="note">No spins yet. Tap a result to start tracking.</div>';
+    return;
+  }
+  box.innerHTML = state.spins.map(s => `
+    <div class="log-item">
+      <div class="row">
+        <div>
+          <div style="font-weight:800">Spin ${s.spin} • L${s.levelBefore}</div>
+          <div class="muted">${s.note}</div>
+        </div>
+        <div style="font-weight:800; color:${s.delta >= 0 ? "#22c55e" : "#ff6b6b"}">${s.delta >= 0 ? "+" : "-"}${fmt(Math.abs(s.delta))}</div>
+      </div>
+      <div style="height:8px"></div>
+      <div class="row muted">
+        <span>Bankroll: ${fmt(s.bankrollAfter)}</span>
+        <span>High: ${fmt(s.highAfter)}</span>
+      </div>
+    </div>
+  `).join("");
+}
 
-      sessionDeltaDisplay.textContent = `${delta >= 0 ? '+' : '-'}${money(Math.abs(delta)).replace('$', '$')} this session`;
+function getRollingDailySessions(saved){
+  const now = Date.now();
+  const oneDay = 24 * 60 * 60 * 1000;
+  return saved.filter(s => s.timestamp && (now - s.timestamp <= oneDay));
+}
+function getRollingWeeklySessions(saved){
+  const now = Date.now();
+  const oneWeek = 7 * 24 * 60 * 60 * 1000;
+  return saved.filter(s => s.timestamp && (now - s.timestamp <= oneWeek));
+}
 
-      currentBankrollDisplay.className = 'bankroll ' + (delta > 0 ? 'positive' : delta < 0 ? 'negative' : 'neutral');
-      sessionDeltaDisplay.className = 'delta ' + (delta > 0 ? 'positive' : delta < 0 ? 'negative' : 'neutral');
+function renderGoals(){
+  const dailyGoal = round2(state.dailyGoal || 0);
+  const dailySessions = getRollingDailySessions(state.savedSessions);
+  const dailyTotal = round2(dailySessions.reduce((a,b)=>a+b.profit,0));
+  document.getElementById("dailyGoalValue").textContent = fmt(dailyGoal);
+  document.getElementById("dailyTotalValue").textContent = fmt(dailyTotal);
+  const dailyLeft = Math.max(0, round2(dailyGoal - dailyTotal));
+  document.getElementById("dailyLeft").textContent = dailyLeft === 0 ? "Goal reached" : fmt(dailyLeft) + " left";
+  document.getElementById("pDaily").style.width = (dailyGoal > 0 ? Math.max(0, Math.min(100, (dailyTotal / dailyGoal) * 100)) : 0) + "%";
 
-      if (peakDrop > 0.009) {
-        peakWarning.textContent = `You are ${money(peakDrop)} below your peak.`;
-        peakWarning.classList.remove('hidden');
-      } else {
-        peakWarning.classList.add('hidden');
+  const weeklyGoal = round2(state.weeklyGoal || 0);
+  const weeklySessions = getRollingWeeklySessions(state.savedSessions);
+  const weeklyTotal = round2(weeklySessions.reduce((a,b)=>a+b.profit,0));
+  document.getElementById("weeklyGoalValue").textContent = fmt(weeklyGoal);
+  document.getElementById("weeklyTotalValue").textContent = fmt(weeklyTotal);
+  const weeklyLeft = Math.max(0, round2(weeklyGoal - weeklyTotal));
+  document.getElementById("weeklyLeft").textContent = weeklyLeft === 0 ? "Goal reached" : fmt(weeklyLeft) + " left";
+  document.getElementById("pWeekly").style.width = (weeklyGoal > 0 ? Math.max(0, Math.min(100, (weeklyTotal / weeklyGoal) * 100)) : 0) + "%";
+}
+
+function getSessionPoints(){
+  const points = [{x:0, y:round2(state.startingBankroll)}];
+  const ordered = state.spins.slice().reverse();
+  ordered.forEach((spin, idx) => points.push({x: idx+1, y: round2(spin.bankrollAfter)}));
+  return points;
+}
+function getGrowthPoints(){
+  return state.savedSessions.map((s, idx) => ({x: idx+1, y: round2(s.end)}));
+}
+function getBounds(values, fallback){
+  const arr = values.length ? values : [fallback];
+  const min = Math.floor(Math.min(...arr) - 5);
+  const max = Math.ceil(Math.max(...arr) + 5);
+  return {min, max};
+}
+
+function initCharts(){
+  const sessionCtx = document.getElementById("bankrollChart").getContext("2d");
+  bankrollChart = new Chart(sessionCtx, {
+    type:"line",
+    data:{datasets:[{
+      data: getSessionPoints(),
+      borderColor:"#3b82f6",
+      backgroundColor:"rgba(59,130,246,.16)",
+      borderWidth:3,
+      pointRadius:3,
+      tension:0.4,
+      fill:true
+    }]},
+    options:{
+      responsive:true,
+      maintainAspectRatio:true,
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{type:"linear", min:0, ticks:{precision:0,color:"#94a3b8"}, grid:{color:"#334155"}},
+        y:{ticks:{color:"#94a3b8", callback:v=>fmt(v)}, grid:{color:"#334155"}}
       }
     }
+  });
 
-    function saveCurrentBankroll() {
-      const current = parseFloat(currentBankrollInput.value);
-      if (!validNumber(current)) return;
-
-      state.currentBankroll = current;
-      if (current > state.sessionHigh) {
-        state.sessionHigh = current;
+  const growthCtx = document.getElementById("growthChart").getContext("2d");
+  growthChart = new Chart(growthCtx, {
+    type:"line",
+    data:{datasets:[{
+      data: getGrowthPoints(),
+      borderColor:"#22c55e",
+      backgroundColor:"rgba(34,197,94,.12)",
+      borderWidth:3,
+      pointRadius:4,
+      tension:0.4,
+      fill:true
+    }]},
+    options:{
+      responsive:true,
+      maintainAspectRatio:true,
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{type:"linear", min:0, ticks:{precision:0,color:"#94a3b8"}, grid:{color:"#334155"}},
+        y:{ticks:{color:"#94a3b8", callback:v=>fmt(v)}, grid:{color:"#334155"}}
       }
-      render();
     }
+  });
+}
 
-    function openSummary() {
-      const profit = state.currentBankroll - state.sessionStart;
-      summaryStart.textContent = money(state.sessionStart);
-      summaryEnd.textContent = money(state.currentBankroll);
-      summaryProfit.textContent = `${profit >= 0 ? '+' : '-'}${money(Math.abs(profit)).replace('$', '$')}`;
-      summaryPeak.textContent = money(state.sessionHigh);
+function updateCharts(){
+  const sessionPts = getSessionPoints();
+  bankrollChart.data.datasets[0].data = sessionPts;
+  let b = getBounds(sessionPts.map(p=>p.y), state.startingBankroll);
+  bankrollChart.options.scales.y.min = b.min;
+  bankrollChart.options.scales.y.max = b.max;
+  bankrollChart.update();
 
-      if (profit >= 0) {
-        summaryMessage.textContent = 'Session Complete — Locked Profit';
-        summaryMessage.className = 'summary-message positive';
-      } else {
-        summaryMessage.textContent = 'Session Closed — Stay Disciplined';
-        summaryMessage.className = 'summary-message negative';
-      }
+  const growthPts = getGrowthPoints();
+  growthChart.data.datasets[0].data = growthPts;
+  let g = getBounds(growthPts.map(p=>p.y), state.lastExitBankroll);
+  growthChart.options.scales.y.min = g.min;
+  growthChart.options.scales.y.max = g.max;
+  growthChart.update();
+}
 
-      summaryModalBackdrop.classList.remove('hidden');
-    }
+function updateUI(){
+  const profit = round2(state.bankroll - state.startingBankroll);
 
-    function closeSummary() {
-      summaryModalBackdrop.classList.add('hidden');
-    }
+  document.getElementById("bankroll").textContent = fmt(state.bankroll);
+  const sp = document.getElementById("sessionProfit");
+  sp.textContent = fmtSigned(profit);
+  sp.className = "value " + (profit >= 0 ? "pos" : "neg");
+  document.getElementById("level").textContent = String(state.level);
+  document.getElementById("sessionHigh").textContent = fmt(state.sessionHigh);
+  document.getElementById("dozenBet").textContent = fmt(3 * state.level * state.baseUnit);
+  document.getElementById("streetBet").textContent = fmt(1 * state.level * state.baseUnit);
+  document.getElementById("totalBet").textContent = fmt(6 * state.level * state.baseUnit);
 
-    sessionStartInput.addEventListener('input', updateStartButton);
-    startSessionBtn.addEventListener('click', startSession);
-    saveBankrollBtn.addEventListener('click', saveCurrentBankroll);
-    endSessionBtn.addEventListener('click', openSummary);
-    closeSummaryBtn.addEventListener('click', closeSummary);
+  const [label, bg, color] = getStatus();
+  const badge = document.getElementById("statusBadge");
+  badge.textContent = label;
+  badge.style.background = bg;
+  badge.style.color = color;
 
-    function goToNewSession() {
-      closeSummary();
-      resetState();
-      openGateScreen();
-    }
+  document.getElementById("targetMsg").style.display = state.targetLocked ? "block" : "none";
+  document.getElementById("unlockPlayBtn").style.display = state.targetLocked ? "block" : "none";
+  document.getElementById("recoveryMsg").style.display = state.recoveryMode ? "block" : "none";
+  setMainButtonsDisabled(state.targetLocked);
 
-    newSessionBtn.addEventListener('click', goToNewSession);
-    startFreshBtn.addEventListener('click', goToNewSession);
+  document.getElementById("startingBankrollInput").value = state.startingBankroll.toFixed(2);
+  document.getElementById("targetProfitInput").value = state.targetProfit.toFixed(2);
+  document.getElementById("baseUnitInput").value = state.baseUnit.toFixed(2);
 
-    currentBankrollInput.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter') saveCurrentBankroll();
-    });
+  renderSpinLog();
+  renderGoals();
+  updateCharts();
+  saveState();
+}
 
-    openGateScreen();
-  </script>
+loadState();
+window.addEventListener("DOMContentLoaded", () => {
+  initCharts();
+  updateUI();
+  const overlayInput = document.getElementById("overlayBankrollInput");
+  document.getElementById("overlayStartBtn").addEventListener("click", startSessionFromOverlay);
+  overlayInput.addEventListener("keydown", (e) => {
+    if(e.key === "Enter") startSessionFromOverlay();
+  });
+  showStartOverlay();
+});
+</script>
 </body>
 </html>
