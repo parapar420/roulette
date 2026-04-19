@@ -189,7 +189,7 @@
       <div class="label">Starting Bankroll</div>
       <input id="overlayBankrollInput" type="number" step="0.01" inputmode="decimal" placeholder="116.70" />
       <div id="overlayError" class="overlay-error"></div>
-      <button id="overlayStartBtn" class="btn-dark" style="margin-top:8px">Start Session</button>
+      <button id="overlayStartBtn" class="btn-dark" style="margin-top:8px" onclick="startSessionFromOverlay()">Start Session</button>
     </div>
   </div>
 
@@ -291,8 +291,7 @@
 
         <div id="targetMsg" class="info-note" style="display:none">Target reached. Buttons are locked. Cash out or unlock only if you really want to continue.</div>
         <div id="recoveryMsg" class="info-note" style="display:none">Recovery mode active.</div>
-        
-        <div style="height:12px"></div>
+<div style="height:12px"></div>
         <button id="unlockPlayBtn" class="btn-dark" onclick="unlockAfterTarget()" style="display:none">Unlock & Continue</button>
       </div>
     </section>
@@ -397,11 +396,23 @@ function loadState(){
 }
 
 function showStartOverlay(){
-  document.getElementById('startOverlay').classList.remove('hidden');
-  document.getElementById('overlayError').textContent = '';
-  setTimeout(()=>document.getElementById('overlayBankrollInput').focus(),30);
+  const overlay = document.getElementById('startOverlay');
+  if(overlay){
+    overlay.classList.remove('hidden');
+    overlay.style.display = 'flex';
+  }
+  const err = document.getElementById('overlayError');
+  if(err) err.textContent = '';
+  const input = document.getElementById('overlayBankrollInput');
+  if(input) setTimeout(()=>input.focus(),30);
 }
-function hideStartOverlay(){ document.getElementById('startOverlay').classList.add('hidden'); }
+function hideStartOverlay(){
+  const overlay = document.getElementById('startOverlay');
+  if(overlay){
+    overlay.classList.add('hidden');
+    overlay.style.display = 'none';
+  }
+}
 function applyStartingBankroll(value){
   const amount = round2(value);
   state.startingBankroll = amount;
@@ -415,7 +426,8 @@ function applyStartingBankroll(value){
   state.spins = [];
   state.historySnapshots = [];
   state.streakCount = 0;
-  document.getElementById('sessionNameInput').value = '';
+  const sessionNameInput = document.getElementById('sessionNameInput');
+  if(sessionNameInput) sessionNameInput.value = '';
   updateUI();
   hideStartOverlay();
 }
@@ -632,7 +644,7 @@ function factoryResetAll(){
 function renderSpinLog(){
   const box = document.getElementById('spinLog');
   if(state.spins.length === 0){
-    box.innerHTML = '';
+    box.innerHTML = '<div class="info-note" style="margin-top:0">No spins yet. Tap a result to start tracking.</div>';
     return;
   }
   box.innerHTML = state.spins.map(s => `
@@ -764,10 +776,6 @@ function updateUI(){
   sc.textContent = status.text;
   sc.className = 'chip ' + (status.cls === 'green' ? 'green' : 'blue') + ' dot';
 
-  const bp = document.getElementById('bankrollStatePill');
-  bp.textContent = state.targetLocked ? 'LOCKED' : (state.recoveryMode ? 'RECOVERY' : 'IN PLAY');
-  bp.className = 'chip ' + (state.targetLocked ? 'blue' : 'green') + ' dot';
-
   document.getElementById('targetMsg').style.display = state.targetLocked ? 'block' : 'none';
   document.getElementById('unlockPlayBtn').style.display = state.targetLocked ? 'block' : 'none';
   document.getElementById('recoveryMsg').style.display = state.recoveryMode ? 'block' : 'none';
@@ -787,8 +795,19 @@ loadState();
 window.addEventListener('DOMContentLoaded', ()=>{
   initCharts();
   updateUI();
-  document.getElementById('overlayStartBtn').addEventListener('click', startSessionFromOverlay);
-  document.getElementById('overlayBankrollInput').addEventListener('keydown', (e)=>{ if(e.key === 'Enter') startSessionFromOverlay(); });
+
+  const btn = document.getElementById('overlayStartBtn');
+  const input = document.getElementById('overlayBankrollInput');
+
+  if(btn) btn.addEventListener('click', startSessionFromOverlay);
+  if(input) input.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') startSessionFromOverlay(); });
+
+  if(state.startingBankroll > 0 && state.bankroll > 0){
+    hideStartOverlay();
+  } else {
+    showStartOverlay();
+  }
+});
   if(state.startingBankroll > 0 && state.bankroll > 0) hideStartOverlay(); else showStartOverlay();
 });
 </script>
