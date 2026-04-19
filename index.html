@@ -641,12 +641,20 @@ function initCharts(){
     type:"line",
     data:{datasets:[{
       data: getSessionPoints(),
-      borderColor:"#3b82f6",
-      backgroundColor:"rgba(59,130,246,.16)",
       borderWidth:3,
       pointRadius:3,
       tension:0.4,
-      fill:true
+      fill:false,
+      segment: {
+        borderColor: ctx => {
+          const y0 = ctx.p0.parsed.y;
+          const y1 = ctx.p1.parsed.y;
+          const base = state.startingBankroll;
+          if (y1 >= base && y0 >= base) return "#22c55e"; // green
+          if (y1 < base && y0 < base) return "#ef4444"; // red
+          return y1 >= base ? "#22c55e" : "#ef4444";
+        }
+      }
     }]},
     options:{
       responsive:true,
