@@ -234,8 +234,8 @@
       </div>
 
       <div class="hero-card" style="margin-bottom:14px;text-align:center;">
-        <div style="display:flex;justify-content:center;margin-bottom:10px;">
-          <div id="bankrollStatePill" class="chip green dot" style="font-size:14px">IN PLAY</div>
+        <div style="display:none;">
+          
         </div>
         <div style="min-width:0;padding-right:64px;">
           <div class="label">Current Bankroll</div>
@@ -291,7 +291,7 @@
 
         <div id="targetMsg" class="info-note" style="display:none">Target reached. Buttons are locked. Cash out or unlock only if you really want to continue.</div>
         <div id="recoveryMsg" class="info-note" style="display:none">Recovery mode active.</div>
-        <div id="streakNote" class="info-note">Streak Count: goes up on hits, resets to 0 after first miss, then goes negative on consecutive misses.</div>
+        
         <div style="height:12px"></div>
         <button id="unlockPlayBtn" class="btn-dark" onclick="unlockAfterTarget()" style="display:none">Unlock & Continue</button>
       </div>
@@ -632,7 +632,7 @@ function factoryResetAll(){
 function renderSpinLog(){
   const box = document.getElementById('spinLog');
   if(state.spins.length === 0){
-    box.innerHTML = '<div class="info-note" style="margin-top:0">No spins yet. Tap a result to start tracking.</div>';
+    box.innerHTML = '';
     return;
   }
   box.innerHTML = state.spins.map(s => `
