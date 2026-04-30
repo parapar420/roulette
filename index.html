@@ -1,813 +1,161 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Roulette Tracker Rebuild</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Double Dozen Recovery Tracker</title>
   <style>
     :root{
-      --bg:#030d22;
-      --bg2:#071833;
-      --panel:#071a3a;
-      --panel2:#091f45;
-      --panel3:#0b2550;
-      --line:#173768;
-      --text:#f7fbff;
-      --muted:#9fb2d4;
-      --blue:#4990ff;
-      --green:#43d17c;
-      --greenDeep:#0c4a2e;
-      --red:#ff5b6d;
-      --redDeep:#5b1020;
-      --gold:#f5be42;
-      --purple:#b374ff;
-      --shadow:0 20px 40px rgba(0,0,0,.34);
-      --radius:26px;
-      --radius-sm:20px;
+      --bg:#050807; --card:#0e1512; --card2:#111c18; --text:#eef8f1; --muted:#8ea99a;
+      --green:#39ff88; --gold:#d8b85a; --red:#ff4d64; --line:#20342b; --blue:#63d2ff;
+      --shadow:0 16px 40px rgba(0,0,0,.35);
     }
-    *{box-sizing:border-box}
-    html,body{margin:0;padding:0;background:radial-gradient(circle at top left, #0a2146 0%, var(--bg) 38%, #020914 100%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
-    body{min-height:100vh}
-    .app{max-width:860px;margin:0 auto;padding:18px 14px 36px}
-    .card{
-      background:linear-gradient(180deg, rgba(7,26,58,.98) 0%, rgba(5,20,44,.98) 100%);
-      border:1px solid rgba(77,125,205,.24);
-      border-radius:32px;
-      box-shadow:var(--shadow);
-      padding:18px;
-      margin-bottom:16px;
-      overflow:hidden;
-    }
-    .main-card{padding:18px 18px 16px}
-    .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
-    .headline{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-    .title{font-size:24px;font-weight:900;letter-spacing:-.03em}
-    .chip{
-      display:inline-flex;align-items:center;gap:9px;
-      padding:11px 16px;border-radius:999px;font-size:13px;font-weight:800;
-      border:1px solid transparent;white-space:nowrap
-    }
-    .chip.blue{background:rgba(45,110,255,.16);color:#76a7ff;border-color:rgba(73,144,255,.18)}
-    .chip.green{background:rgba(24,100,56,.18);color:#5ced95;border-color:rgba(67,209,124,.20)}
-    .chip.dot::before{content:"";width:12px;height:12px;border-radius:999px;background:currentColor;box-shadow:0 0 12px currentColor;display:block}
-
-    .grid-3,.grid-2{display:grid;gap:14px}
-    .grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
-    .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
-
-    .mini-card,.hero-card,.action-card{
-      border-radius:28px;
-      border:1px solid rgba(77,125,205,.22);
-      background:linear-gradient(180deg, rgba(6,24,55,.95) 0%, rgba(4,17,40,.95) 100%);
-      padding:18px;
-      min-width:0;
-      position:relative;
-      overflow:hidden;
-    }
-    .hero-card{padding:22px 20px}
-    .hero-row{display:flex;align-items:center;justify-content:space-between;gap:14px}
-    .label{font-size:15px;color:var(--muted);margin-bottom:10px}
-    .value-xl{font-size:28px;font-weight:900;letter-spacing:-.04em;line-height:1}
-    .value-lg{font-size:28px;font-weight:900;letter-spacing:-.04em;line-height:1.05}
-    .value-md{font-size:22px;font-weight:900;letter-spacing:-.03em;line-height:1.05}
-    .value-pos{color:var(--green)}
-    .value-neg{color:var(--red)}
-    .icon-pill{
-      width:56px;height:56px;border-radius:999px;display:flex;align-items:center;justify-content:center;
-      border:2px solid currentColor;background:rgba(255,255,255,.03);font-size:24px;flex:0 0 auto;opacity:.9;
-      position:absolute;right:14px;top:14px;pointer-events:none;
-    }
-    .icon-blue{color:var(--blue)}
-    .icon-purple{color:var(--purple)}
-    .icon-gold{color:var(--gold)}
-    .icon-green{color:var(--green)}
-
-    .actions-title{font-size:18px;font-weight:900;margin:0 0 14px}
-    button{
-      appearance:none;border:none;border-radius:24px;padding:18px 16px;font-size:18px;font-weight:900;cursor:pointer;
-      color:#fff;width:100%;transition:transform .06s ease, opacity .2s ease, filter .2s ease;
-    }
-    button:active{transform:translateY(1px)}
-    button:disabled{opacity:.52;cursor:not-allowed}
-    .btn-green{background:linear-gradient(180deg,#0f6f43 0%, #0a5534 100%);box-shadow:inset 0 0 0 2px rgba(73,232,149,.35)}
-    .btn-red{background:linear-gradient(180deg,#7b1730 0%, #571120 100%);box-shadow:inset 0 0 0 2px rgba(255,98,123,.38)}
-    .btn-gold{background:linear-gradient(180deg,#7a5215 0%, #614114 100%);box-shadow:inset 0 0 0 2px rgba(245,190,66,.38)}
-    .btn-dark{background:linear-gradient(180deg,#102a59 0%, #0a1f43 100%);box-shadow:inset 0 0 0 2px rgba(86,144,255,.18)}
-    .btn-danger{background:linear-gradient(180deg,#5f1737 0%, #451128 100%);box-shadow:inset 0 0 0 2px rgba(255,94,120,.24)}
-    .btn-ghost{background:linear-gradient(180deg,#0b1f45 0%, #091936 100%);box-shadow:inset 0 0 0 2px rgba(152,181,235,.15)}
-
-    .sub-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:14px}
-    .info-note{margin-top:14px;padding:16px 18px;border-radius:22px;background:rgba(17,43,87,.45);border:1px solid rgba(93,132,202,.18);font-size:15px;color:#86b1ff;line-height:1.4}
-
-    .chart-card{padding:16px 16px 12px}
-    .section-title{font-size:22px;font-weight:900;margin:4px 0 12px}
-    .chart-wrap{
-      position:relative;
-      height:260px;
-      width:100%;
-      margin:0;
-      padding:0;
-    }
-    canvas{display:block;width:100% !important;height:100% !important}
-
-    .log{display:flex;flex-direction:column;gap:10px;max-height:300px;overflow:auto}
-    .log-item{background:linear-gradient(180deg, rgba(8,29,61,.95) 0%, rgba(6,21,45,.95) 100%);border:1px solid rgba(77,125,205,.20);border-radius:20px;padding:12px 14px}
-    .row{display:flex;align-items:center;justify-content:space-between;gap:10px}
-    .muted{color:var(--muted);font-size:12px}
-    .pill{display:inline-flex;align-items:center;padding:8px 12px;border-radius:999px;background:rgba(17,35,68,.9);font-size:12px;font-weight:800;color:#e8eefc}
-    .progress{height:12px;border-radius:999px;background:#223759;overflow:hidden;border:1px solid rgba(77,125,205,.16)}
-    .progress>div{height:100%;width:0%;background:linear-gradient(90deg,#5598ff 0%, #42d07c 100%)}
-    .kpi{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:10px 0 7px;font-size:14px}
-    .settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-    input{
-      width:100%;border:1px solid rgba(77,125,205,.22);border-radius:18px;padding:14px;background:#071731;color:var(--text);font-size:16px;outline:none
-    }
-
-    .overlay{position:fixed;inset:0;background:rgba(1,8,20,.85);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}
-    .overlay.hidden{display:none}
-    .overlay-card{width:min(100%,420px);background:linear-gradient(180deg, rgba(7,26,58,.98) 0%, rgba(5,20,44,.98) 100%);border:1px solid rgba(77,125,205,.24);border-radius:30px;padding:22px;box-shadow:var(--shadow)}
-    .overlay-title{font-size:30px;font-weight:900;letter-spacing:-.04em;margin:0 0 10px}
-    .overlay-sub{margin:0 0 16px;color:var(--muted);line-height:1.4}
-    .overlay-error{color:#f7a6af;font-size:13px;min-height:16px;margin-top:8px}
-
-    @media (max-width:720px){
-      .grid-3,.grid-2,.sub-actions,.settings-grid{grid-template-columns:1fr}
-      .title{font-size:22px}
-      .value-xl{font-size:30px}
-      .icon-pill{width:74px;height:74px;font-size:30px}
-      .chart-wrap{height:220px}
-      .hero-row{align-items:flex-start}
-    }
-
-    /* iPhone 14 Pro tuned layout */
-    @media only screen and (max-width: 393px){
-      body{min-height:100vh;min-height:100dvh}
-      .app{max-width:393px;margin:0 auto;padding:calc(12px + env(safe-area-inset-top)) 10px calc(18px + env(safe-area-inset-bottom));}
-      .card{border-radius:28px;padding:14px;margin-bottom:12px}
-      .main-card{padding:14px 14px 12px}
-      .topbar{margin-bottom:12px;gap:10px}
-      .headline{gap:8px}
-      .title{font-size:20px}
-      .chip{padding:9px 12px;font-size:11px}
-      .grid-3{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-      .grid-2{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-      .mini-card,.hero-card,.action-card{border-radius:22px;padding:14px}
-      .hero-card{padding:18px 14px}
-      .label{font-size:12px;margin-bottom:6px}
-      .value-xl{font-size:32px}
-      .value-lg{font-size:16px}
-      .value-md{font-size:16px}
-      .icon-pill{width:38px;height:38px;font-size:16px;border-width:1.5px;right:10px;top:10px}
-      .actions-title{font-size:16px;margin-bottom:10px}
-      button{border-radius:20px;padding:16px 12px;font-size:16px}
-      .sub-actions{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:10px}
-      .info-note{margin-top:10px;padding:12px 14px;border-radius:18px;font-size:13px}
-      .section-title{font-size:18px;margin:0 0 8px}
-      .chart-card{padding:14px 14px 10px}
-      .chart-wrap{height:210px}
-      .log{max-height:260px}
-      .log-item{border-radius:16px;padding:10px 12px}
-      .kpi{margin:8px 0 6px;font-size:13px}
-      .pill{padding:7px 10px;font-size:11px}
-      .progress{height:10px}
-      .settings-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-      input{border-radius:16px;padding:12px;font-size:16px}
-      .overlay{padding:12px}
-      .overlay-card{width:100%;max-width:360px;border-radius:26px;padding:18px}
-      .overlay-title{font-size:26px}
-      .overlay-sub{font-size:14px}
-    }
-
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    body{margin:0;background:radial-gradient(circle at top,#0d2118 0,#050807 45%,#020403 100%);color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh;padding:env(safe-area-inset-top) 12px env(safe-area-inset-bottom)}
+    .app{max-width:430px;margin:0 auto;padding:12px 0 26px}
+    .hero{padding:16px 12px 10px;text-align:center}
+    .title{font-size:24px;font-weight:900;letter-spacing:.3px;margin:0}.brand{color:var(--gold);font-size:12px;margin-top:4px;letter-spacing:1.8px;text-transform:uppercase}.pillrow{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}.pill{border:1px solid rgba(216,184,90,.45);color:var(--gold);border-radius:999px;padding:6px 10px;font-size:12px;background:rgba(216,184,90,.07)}
+    .card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--line);border-radius:22px;padding:14px;margin:10px 0;box-shadow:var(--shadow)}
+    .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.stat{background:#09100d;border:1px solid #1b3027;border-radius:16px;padding:10px;text-align:center;min-height:72px}.label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px}.value{font-size:20px;font-weight:900;margin-top:5px}.value.big{font-size:30px}.green{color:var(--green)}.red{color:var(--red)}.gold{color:var(--gold)}.blue{color:var(--blue)}
+    .section-title{font-weight:900;margin:0 0 10px;font-size:15px;color:#f8fff9}.small{font-size:12px;color:var(--muted);line-height:1.35}.btn{width:100%;border:0;border-radius:16px;padding:14px 10px;font-size:16px;font-weight:900;color:#06100b;background:var(--green);box-shadow:0 8px 20px rgba(57,255,136,.18)}.btn.secondary{background:#17241e;color:var(--text);border:1px solid #294739;box-shadow:none}.btn.goldbtn{background:var(--gold);color:#140f03}.btn.redbtn{background:var(--red);color:#190206}.btn.bluebtn{background:var(--blue);color:#021018}.btn:active{transform:scale(.985)}
+    .dozens{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.dozen{background:#09100d;border:1px solid #244133;border-radius:18px;padding:12px 6px;text-align:center}.dozen.active{border-color:var(--green);box-shadow:0 0 0 1px rgba(57,255,136,.4) inset}.dozen.out{border-color:var(--red);opacity:.8}.dozen .dnum{font-size:20px;font-weight:900}.dozen .drange{font-size:11px;color:var(--muted);margin-top:2px}
+    input,select{width:100%;background:#07100c;border:1px solid #284637;border-radius:14px;color:var(--text);padding:13px 12px;font-size:16px;outline:none} select{appearance:none}.field{margin:8px 0}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.6px}
+    .log{max-height:220px;overflow:auto;border-radius:16px;border:1px solid #1b3027}.row{display:grid;grid-template-columns:42px 1fr 72px 60px;gap:6px;padding:9px 10px;border-bottom:1px solid #15251f;font-size:12px;align-items:center}.row:last-child{border-bottom:0}.rowhead{color:var(--muted);background:#07100c;position:sticky;top:0}.modal{position:fixed;inset:0;background:rgba(0,0,0,.86);display:flex;align-items:center;justify-content:center;padding:16px;z-index:10}.modal-card{width:min(430px,100%);background:linear-gradient(180deg,#101a16,#08100d);border:1px solid #294739;border-radius:24px;padding:18px;box-shadow:var(--shadow)}.hidden{display:none}.notice{padding:10px;border-radius:15px;border:1px solid #294739;background:#08110e;color:var(--muted);font-size:12px;line-height:1.35}.danger{border-color:rgba(255,77,100,.5);color:#ffd2d8;background:rgba(255,77,100,.08)}
   </style>
 </head>
 <body>
-  <div id="startOverlay" class="overlay">
-    <div class="overlay-card">
-      <div class="overlay-title">Start Session</div>
-      <p class="overlay-sub">Enter your current bankroll to unlock the tracker.</p>
-      <div class="label">Starting Bankroll</div>
-      <input id="overlayBankrollInput" type="number" step="0.01" inputmode="decimal" placeholder="116.70" />
-      <div id="overlayError" class="overlay-error"></div>
-      <button id="overlayStartBtn" class="btn-dark" style="margin-top:8px" onclick="startSessionFromOverlay()">Start Session</button>
+<div class="app">
+  <div class="hero">
+    <h1 class="title">Double Dozen Recovery</h1>
+    <div class="brand">Parapar.Media</div>
+    <div class="pillrow"><div class="pill">Follow last 2 dozens</div><div class="pill">Reset at previous high</div><div class="pill">5% target</div></div>
+  </div>
+
+  <div class="card">
+    <div class="grid3">
+      <div class="stat"><div class="label">Bankroll</div><div id="bankroll" class="value big">$0.00</div></div>
+      <div class="stat"><div class="label">Profit</div><div id="profit" class="value big">$0.00</div></div>
+      <div class="stat"><div class="label">Level</div><div id="level" class="value big gold">1</div></div>
+    </div>
+    <div class="grid3" style="margin-top:8px">
+      <div class="stat"><div class="label">Prev High</div><div id="prevHigh" class="value">$0.00</div></div>
+      <div class="stat"><div class="label">Target</div><div id="target" class="value green">$0.00</div></div>
+      <div class="stat"><div class="label">Total Bet</div><div id="totalBet" class="value blue">$0.00</div></div>
     </div>
   </div>
 
-  <div class="app">
-    <section class="card main-card">
-      <div class="topbar">
-        <div class="headline">
-          <div class="title">Golden Key</div>
-          <div class="chip blue">ROULETTE TRACKER</div>
-        </div>
-        <div id="statusChip" class="chip green dot">ACTIVE SESSION</div>
-      </div>
-
-      <div class="grid-3" style="margin-bottom:14px;">
-        <div class="mini-card">
-          <div class="hero-row" style="align-items:flex-start;justify-content:flex-start;">
-            <div style="min-width:0;padding-right:64px;">
-              <div class="label">Level</div>
-              <div id="level" class="value-lg">1</div>
-            </div>
-            
-          </div>
-        </div>
-        <div class="mini-card">
-          <div class="hero-row" style="align-items:flex-start;justify-content:flex-start;">
-            <div style="min-width:0;padding-right:64px;">
-              <div class="label">Streak Count</div>
-              <div id="streakCount" class="value-lg">0</div>
-            </div>
-            
-          </div>
-        </div>
-        <div class="mini-card">
-          <div class="hero-row" style="align-items:flex-start;justify-content:flex-start;">
-            <div style="min-width:0;padding-right:64px;">
-              <div class="label">Session High</div>
-              <div id="sessionHigh" class="value-md">$0.00</div>
-            </div>
-            
-          </div>
-        </div>
-      </div>
-
-      <div class="hero-card" style="margin-bottom:14px;text-align:center;">
-        <div style="display:none;">
-          
-        </div>
-        <div style="min-width:0;padding-right:64px;">
-          <div class="label">Current Bankroll</div>
-          <div id="bankroll" class="value-xl">$0.00</div>
-          <div id="sessionProfit" class="label" style="margin-top:10px;font-size:16px;font-weight:800;color:#cfe0ff">+$0.00</div>
-        </div>
-      </div>
-
-      <div class="grid-3" style="margin-bottom:14px;">
-        <div class="mini-card">
-          <div class="hero-row" style="align-items:flex-start;justify-content:flex-start;">
-            <div style="min-width:0;padding-right:64px;">
-              <div class="label">Dozen Bet</div>
-              <div id="dozenBet" class="value-lg" style="color:var(--blue)">$0.30</div>
-            </div>
-            
-          </div>
-        </div>
-        <div class="mini-card">
-          <div class="hero-row" style="align-items:flex-start;justify-content:flex-start;">
-            <div style="min-width:0;padding-right:64px;">
-              <div class="label">Street Bet</div>
-              <div id="streetBet" class="value-lg" style="color:var(--green)">$0.10</div>
-            </div>
-            
-          </div>
-        </div>
-        <div class="mini-card">
-          <div class="hero-row" style="align-items:flex-start;justify-content:flex-start;">
-            <div style="min-width:0">
-              <div class="label">Total Bet</div>
-              <div id="totalBet" class="value-lg" style="color:var(--purple)">$0.60</div>
-            </div>
-            
-          </div>
-        </div>
-      </div>
-
-      <div class="action-card">
-        <div class="actions-title">Quick Actions</div>
-        <div class="grid-2">
-          <button id="btnDozen" class="btn-green" onclick="processSpin('dozen')">✓ DOZEN HIT</button>
-          <button id="btnMiss" class="btn-red" onclick="processSpin('miss')">✕ MISS</button>
-        </div>
-        <div style="height:12px"></div>
-        <button id="btnStreet" class="btn-gold" onclick="processSpin('street')">⌗ STREET HIT</button>
-
-        <div class="sub-actions">
-          <button class="btn-ghost" onclick="undoLastSpin()">↺ UNDO LAST</button>
-          <button class="btn-dark" onclick="resetSession()">⟳ NEW SESSION</button>
-          <button class="btn-danger" onclick="finishAndSaveSession()">🗑 SAVE SESSION</button>
-        </div>
-
-        <div id="targetMsg" class="info-note" style="display:none">Target reached. Buttons are locked. Cash out or unlock only if you really want to continue.</div>
-        <div id="recoveryMsg" class="info-note" style="display:none">Recovery mode active.</div>
-<div style="height:12px"></div>
-        <button id="unlockPlayBtn" class="btn-dark" onclick="unlockAfterTarget()" style="display:none">Unlock & Continue</button>
-      </div>
-    </section>
-
-    <section class="card chart-card">
-      <div class="section-title">Session Graph</div>
-      <div class="chart-wrap"><canvas id="bankrollChart"></canvas></div>
-    </section>
-
-    <section class="card chart-card">
-      <div class="section-title">Growth Mode</div>
-      <div class="chart-wrap"><canvas id="growthChart"></canvas></div>
-    </section>
-
-    <section class="card">
-      <div class="section-title">Goals</div>
-      <div class="grid-2">
-        <div class="mini-card">
-          <div class="label">Daily Goal</div>
-          <div id="dailyGoalValue" class="value-md">$20.00</div>
-          <div class="kpi"><span class="muted">Last 24 Hours</span><span id="dailyTotalValue" class="pill">$0.00</span></div>
-          <div class="kpi"><span class="muted">Progress</span><span id="dailyLeft" class="pill">$20.00 left</span></div>
-          <div class="progress"><div id="pDaily"></div></div>
-        </div>
-        <div class="mini-card">
-          <div class="label">Weekly Goal</div>
-          <div id="weeklyGoalValue" class="value-md">$100.00</div>
-          <div class="kpi"><span class="muted">Last 7 Days</span><span id="weeklyTotalValue" class="pill">$0.00</span></div>
-          <div class="kpi"><span class="muted">Progress</span><span id="weeklyLeft" class="pill">$100.00 left</span></div>
-          <div class="progress"><div id="pWeekly"></div></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="card">
-      <div class="section-title">Spin Log</div>
-      <div id="spinLog" class="log"></div>
-    </section>
-
-    <section class="card">
-      <div class="section-title">Session Settings</div>
-      <div class="settings-grid">
-        <div>
-          <div class="label">Start Bankroll</div>
-          <input id="startingBankrollInput" type="number" step="0.01" />
-        </div>
-        <div>
-          <div class="label">Target Profit</div>
-          <input id="targetProfitInput" type="number" step="0.10" />
-        </div>
-        <div>
-          <div class="label">Base Unit</div>
-          <input id="baseUnitInput" type="number" step="0.01" />
-        </div>
-        <div>
-          <div class="label">Session Name</div>
-          <input id="sessionNameInput" type="text" placeholder="Optional" />
-        </div>
-      </div>
-      <div style="height:14px"></div>
-      <div class="sub-actions">
-        <button class="btn-dark" onclick="startFromCurrent()">Start From Current</button>
-        <button class="btn-ghost" onclick="resetSession()">Reset Session</button>
-        <button class="btn-danger" onclick="factoryResetAll()">Factory Reset</button>
-      </div>
-    </section>
+  <div class="card">
+    <p class="section-title">Active Dozens</p>
+    <div class="dozens">
+      <div id="d1" class="dozen"><div class="dnum">1st</div><div class="drange">1–12</div></div>
+      <div id="d2" class="dozen"><div class="dnum">2nd</div><div class="drange">13–24</div></div>
+      <div id="d3" class="dozen"><div class="dnum">3rd</div><div class="drange">25–36</div></div>
+    </div>
+    <div class="notice" style="margin-top:10px">Tap the result that landed. App updates the last 2 hitting dozens automatically. If 0 hits, tap Zero and the same dozens stay active.</div>
   </div>
 
+  <div class="card">
+    <p class="section-title">Enter Spin Result</p>
+    <div class="grid2">
+      <button class="btn secondary" onclick="spin(1)">1st Dozen Hit</button>
+      <button class="btn secondary" onclick="spin(2)">2nd Dozen Hit</button>
+    </div>
+    <div class="grid2" style="margin-top:8px">
+      <button class="btn secondary" onclick="spin(3)">3rd Dozen Hit</button>
+      <button class="btn redbtn" onclick="spin(0)">Zero</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="section-title">Session Control</p>
+    <div class="grid2">
+      <button class="btn goldbtn" onclick="openSetup(false)">Edit Session</button>
+      <button class="btn redbtn" onclick="resetAll()">Reset</button>
+    </div>
+    <div id="status" class="notice" style="margin-top:10px"></div>
+  </div>
+
+  <div class="card">
+    <p class="section-title">Spin Log</p>
+    <div class="log">
+      <div class="row rowhead"><div>#</div><div>Result</div><div>Level</div><div>Bank</div></div>
+      <div id="log"></div>
+    </div>
+  </div>
+</div>
+
+<div id="setup" class="modal">
+  <div class="modal-card">
+    <h2 style="margin:0 0 6px">Start Session</h2>
+    <div class="small">Use percentage scaling: unit ≈ 1% bankroll, target ≈ 5% bankroll.</div>
+    <div class="field"><label>Starting bankroll</label><input id="startInput" type="number" step="0.01" value="20"></div>
+    <div class="field"><label>Unit size</label><input id="unitInput" type="number" step="0.01" value="0.20"></div>
+    <div class="field"><label>Profit target</label><input id="targetInput" type="number" step="0.01" value="1.00"></div>
+    <div class="field"><label>Max level warning</label><input id="maxLevelInput" type="number" step="1" value="10"></div>
+    <div class="field"><label>Starting active pair</label><select id="pairInput"><option value="1,2">1st + 2nd</option><option value="1,3">1st + 3rd</option><option value="2,3">2nd + 3rd</option></select></div>
+    <button class="btn" onclick="startSession()">Start Tracker</button>
+  </div>
+</div>
 <script>
-const storageKey = "rouletteTrackerRebuild_v21";
-const state = {
-  startingBankroll: 0,
-  bankroll: 0,
-  sessionHigh: 0,
-  targetProfit: 6.5,
-  baseUnit: 0.10,
-  level: 1,
-  dozenWinChain: 0,
-  recoveryMode: false,
-  spins: [],
-  historySnapshots: [],
-  savedSessions: [],
-  targetLocked: false,
-  lastExitBankroll: 0,
-  dailyGoal: 20.00,
-  weeklyGoal: 100.00,
-  streakCount: 0
-};
-
-let bankrollChart = null;
-let growthChart = null;
-
-function fmt(n){ return "$" + Number(n).toFixed(2); }
-function fmtSigned(n){ return (n >= 0 ? "+" : "-") + fmt(Math.abs(n)); }
-function round2(n){ return Math.round(Number(n) * 100) / 100; }
-
-function saveState(){ localStorage.setItem(storageKey, JSON.stringify(state)); }
-function loadState(){
-  const raw = localStorage.getItem(storageKey);
-  if(!raw) return;
-  try{ Object.assign(state, JSON.parse(raw)); }catch(e){}
-}
-
-function showStartOverlay(){
-  const overlay = document.getElementById('startOverlay');
-  if(overlay){
-    overlay.classList.remove('hidden');
-    overlay.style.display = 'flex';
+const money = n => '$' + Number(n).toFixed(2);
+let s = JSON.parse(localStorage.getItem('ddRecovery')||'null') || null;
+function save(){ localStorage.setItem('ddRecovery', JSON.stringify(s)); }
+function init(){ if(!s){ document.getElementById('setup').classList.remove('hidden'); return; } document.getElementById('setup').classList.add('hidden'); render(); }
+function openSetup(newOnly=true){
+  if(s && !newOnly){
+    startInput.value=s.start; unitInput.value=s.unit; targetInput.value=s.targetProfit; maxLevelInput.value=s.maxLevel; pairInput.value=s.active.join(',');
   }
-  const err = document.getElementById('overlayError');
-  if(err) err.textContent = '';
-  const input = document.getElementById('overlayBankrollInput');
-  if(input) setTimeout(()=>input.focus(),30);
+  document.getElementById('setup').classList.remove('hidden');
 }
-function hideStartOverlay(){
-  const overlay = document.getElementById('startOverlay');
-  if(overlay){
-    overlay.classList.add('hidden');
-    overlay.style.display = 'none';
+function startSession(){
+  const start=parseFloat(startInput.value), unit=parseFloat(unitInput.value), target=parseFloat(targetInput.value), maxLevel=parseInt(maxLevelInput.value||'10',10);
+  if(!start||!unit||!target){ alert('Add bankroll, unit, and target.'); return; }
+  s={start, bankroll:start, prevHigh:start, unit, targetProfit:target, level:1, maxLevel, active:pairInput.value.split(',').map(Number), history:[], spins:0};
+  save(); init();
+}
+function spin(result){
+  if(!s) return;
+  const stake=s.unit*s.level*2;
+  if(s.bankroll < stake){ statusMsg('BUST: bankroll cannot cover next bet.', true); return; }
+  const before=s.bankroll; const wasCovered = result!==0 && s.active.includes(result);
+  if(wasCovered){ s.bankroll += s.unit*s.level; }
+  else { s.bankroll -= stake; }
+  let action = wasCovered ? 'WIN' : 'LOSS';
+  // update active pair: zero keeps same; dozen result becomes part of last 2 distinct dozens
+  if(result!==0 && !s.active.includes(result)){
+    s.active.shift(); s.active.push(result);
   }
-}
-function applyStartingBankroll(value){
-  const amount = round2(value);
-  state.startingBankroll = amount;
-  state.bankroll = amount;
-  state.sessionHigh = amount;
-  state.lastExitBankroll = amount;
-  state.level = 1;
-  state.dozenWinChain = 0;
-  state.recoveryMode = false;
-  state.targetLocked = false;
-  state.spins = [];
-  state.historySnapshots = [];
-  state.streakCount = 0;
-  const sessionNameInput = document.getElementById('sessionNameInput');
-  if(sessionNameInput) sessionNameInput.value = '';
-  updateUI();
-  hideStartOverlay();
-}
-function startSessionFromOverlay(){
-  const raw = document.getElementById('overlayBankrollInput').value.trim();
-  const value = Number(raw);
-  if(!raw || !Number.isFinite(value) || value <= 0){
-    document.getElementById('overlayError').textContent = 'Enter a valid bankroll greater than 0.';
-    return;
-  }
-  applyStartingBankroll(value);
-}
-
-function getStatus(){
-  const profit = round2(state.bankroll - state.startingBankroll);
-  if(state.targetLocked) return {text:'TARGET LOCKED', cls:'blue'};
-  if(profit >= state.targetProfit) return {text:'TARGET HIT', cls:'green'};
-  if(state.recoveryMode) return {text:'RECOVERY MODE', cls:'blue'};
-  if(state.level >= 8) return {text:'HIGH RISK', cls:'blue'};
-  if(state.level >= 5) return {text:'WATCH ZONE', cls:'blue'};
-  return {text:'ACTIVE SESSION', cls:'green'};
-}
-
-function takeSnapshot(){
-  state.historySnapshots.unshift(JSON.parse(JSON.stringify({
-    startingBankroll: state.startingBankroll,
-    bankroll: state.bankroll,
-    sessionHigh: state.sessionHigh,
-    targetProfit: state.targetProfit,
-    baseUnit: state.baseUnit,
-    level: state.level,
-    dozenWinChain: state.dozenWinChain,
-    recoveryMode: state.recoveryMode,
-    targetLocked: state.targetLocked,
-    lastExitBankroll: state.lastExitBankroll,
-    spins: state.spins,
-    savedSessions: state.savedSessions,
-    streakCount: state.streakCount
-  })));
-}
-
-function undoLastSpin(){
-  if(!state.historySnapshots.length) return;
-  const prev = state.historySnapshots.shift();
-  Object.assign(state, prev);
-  updateUI();
-}
-
-function setMainButtonsDisabled(disabled){
-  document.getElementById('btnDozen').disabled = disabled;
-  document.getElementById('btnStreet').disabled = disabled;
-  document.getElementById('btnMiss').disabled = disabled;
-}
-
-function lockTargetIfNeeded(){
-  const profit = round2(state.bankroll - state.startingBankroll);
-  if(!state.targetLocked && profit >= state.targetProfit){
-    state.targetLocked = true;
-    state.lastExitBankroll = state.bankroll;
-  }
-}
-function unlockAfterTarget(){ state.targetLocked = false; updateUI(); }
-
-function updateStreak(result){
-  if(result === 'dozen' || result === 'street'){
-    state.streakCount = state.streakCount >= 0 ? state.streakCount + 1 : 1;
-  } else {
-    if(state.streakCount > 0) state.streakCount = 0;
-    else state.streakCount -= 1;
-  }
-}
-
-function appendSpin(result, delta, note, levelBefore){
-  state.spins.unshift({
-    spin: state.spins.length + 1,
-    levelBefore,
-    result,
-    delta: round2(delta),
-    bankrollAfter: round2(state.bankroll),
-    highAfter: round2(state.sessionHigh),
-    streakAfter: state.streakCount,
-    note,
-    timestamp: Date.now()
-  });
-}
-
-function processSpin(result){
-  if(state.targetLocked) return;
-  takeSnapshot();
-  const levelBefore = state.level;
-  let delta = 0;
-  let note = '';
-
-  if(result === 'miss'){
-    delta = -6 * state.level * state.baseUnit;
-    state.level += 1;
-    state.dozenWinChain = 0;
-    note = 'Loss: up 1 level';
-  } else if(result === 'street'){
-    delta = 6 * state.level * state.baseUnit;
-    state.level = Math.max(1, state.level - 1);
-    state.dozenWinChain = 0;
-    note = 'Street hit: down 1 level';
-  } else if(result === 'dozen'){
-    delta = 3 * state.level * state.baseUnit;
-    if(state.dozenWinChain >= 1){
-      state.level = Math.max(1, state.level - 1);
-      state.dozenWinChain = 0;
-      note = 'Second dozen win: down 1 level';
+  // progression after bankroll change
+  if(wasCovered){
+    if(s.bankroll >= s.prevHigh){
+      s.prevHigh = Math.max(s.prevHigh, s.bankroll);
+      s.level = 1;
+      action += ' / RESET';
     } else {
-      state.dozenWinChain = 1;
-      note = 'First dozen win: stay same level';
+      s.level += 1;
+      action += ' / UP';
     }
   }
-
-  updateStreak(result);
-  state.bankroll = round2(state.bankroll + delta);
-
-  if(state.bankroll > state.sessionHigh){
-    state.sessionHigh = state.bankroll;
-    state.level = 1;
-    state.dozenWinChain = 0;
-    note = 'New session high: reset to level 1';
-  }
-  if(!state.recoveryMode && state.bankroll < round2(state.startingBankroll * 0.55)){
-    state.recoveryMode = true;
-    note += (note ? ' • ' : '') + 'Enter recovery mode';
-  }
-
-  lockTargetIfNeeded();
-  appendSpin(result, delta, note, levelBefore);
-  updateUI();
+  s.spins++;
+  s.history.unshift({n:s.spins,result,action,level:s.level,bankroll:s.bankroll,before});
+  s.history=s.history.slice(0,80);
+  save(); render();
 }
-
-function autoSaveCurrentSession(reason){
-  if(state.spins.length === 0) return;
-  const profit = round2(state.bankroll - state.startingBankroll);
-  const nameField = document.getElementById('sessionNameInput');
-  const name = nameField ? nameField.value.trim() : '';
-  const sessionRecord = {
-    name: name || ('Auto Saved - ' + reason),
-    date: new Date().toISOString().slice(0,10),
-    timestamp: Date.now(),
-    start: round2(state.startingBankroll),
-    end: round2(state.bankroll),
-    profit,
-    spins: state.spins.length
-  };
-  state.savedSessions.push(sessionRecord);
-  state.lastExitBankroll = round2(state.bankroll);
-  if(nameField) nameField.value = '';
+function render(){
+  bankroll.textContent=money(s.bankroll); profit.textContent=money(s.bankroll-s.start); prevHigh.textContent=money(s.prevHigh); target.textContent=money(s.start+s.targetProfit); level.textContent=s.level; totalBet.textContent=money(s.unit*s.level*2);
+  profit.className='value big '+(s.bankroll>=s.start?'green':'red');
+  [1,2,3].forEach(d=>{ let el=document.getElementById('d'+d); el.classList.remove('active','out'); el.classList.add(s.active.includes(d)?'active':'out'); });
+  log.innerHTML=s.history.map(h=>`<div class="row"><div>${h.n}</div><div>${h.result===0?'Zero':ordinal(h.result)} ${h.action}</div><div>${h.level}</div><div>${money(h.bankroll)}</div></div>`).join('');
+  let msg='Playing: '+s.active.map(ordinal).join(' + ')+'. ';
+  if(s.bankroll >= s.start+s.targetProfit) msg+='TARGET HIT — leave the table.';
+  else if(s.level>=s.maxLevel) msg+='MAX LEVEL WARNING — pause/leave.';
+  else msg+='Next bet: '+money(s.unit*s.level)+' on each dozen.';
+  statusMsg(msg, s.level>=s.maxLevel || s.bankroll>=s.start+s.targetProfit);
 }
-
-function resetSession(){
-  autoSaveCurrentSession('Reset');
-  state.targetProfit = Number(document.getElementById('targetProfitInput').value || state.targetProfit);
-  state.baseUnit = Number(document.getElementById('baseUnitInput').value || state.baseUnit);
-  state.startingBankroll = round2(state.lastExitBankroll || state.bankroll || 0);
-  state.bankroll = round2(state.startingBankroll);
-  state.sessionHigh = round2(state.startingBankroll);
-  state.level = 1;
-  state.dozenWinChain = 0;
-  state.recoveryMode = false;
-  state.targetLocked = false;
-  state.spins = [];
-  state.historySnapshots = [];
-  state.streakCount = 0;
-  updateUI();
-}
-
-function startFromCurrent(){
-  autoSaveCurrentSession('Start From Current');
-  state.targetProfit = Number(document.getElementById('targetProfitInput').value || state.targetProfit);
-  state.baseUnit = Number(document.getElementById('baseUnitInput').value || state.baseUnit);
-  state.startingBankroll = round2(state.bankroll);
-  state.lastExitBankroll = round2(state.bankroll);
-  state.sessionHigh = round2(state.bankroll);
-  state.level = 1;
-  state.dozenWinChain = 0;
-  state.recoveryMode = false;
-  state.targetLocked = false;
-  state.spins = [];
-  state.historySnapshots = [];
-  state.streakCount = 0;
-  updateUI();
-}
-
-function finishAndSaveSession(){ autoSaveCurrentSession('Manual Save'); updateUI(); }
-
-function factoryResetAll(){
-  if(!confirm('This will erase all local session history and current session data. Continue?')) return;
-  localStorage.removeItem(storageKey);
-  state.startingBankroll = 0;
-  state.bankroll = 0;
-  state.sessionHigh = 0;
-  state.targetProfit = 6.5;
-  state.baseUnit = 0.10;
-  state.level = 1;
-  state.dozenWinChain = 0;
-  state.recoveryMode = false;
-  state.spins = [];
-  state.historySnapshots = [];
-  state.savedSessions = [];
-  state.targetLocked = false;
-  state.lastExitBankroll = 0;
-  state.dailyGoal = 20.00;
-  state.weeklyGoal = 100.00;
-  state.streakCount = 0;
-  document.getElementById('sessionNameInput').value = '';
-  updateUI();
-  showStartOverlay();
-}
-
-function renderSpinLog(){
-  const box = document.getElementById('spinLog');
-  if(state.spins.length === 0){
-    box.innerHTML = '<div class="info-note" style="margin-top:0">No spins yet. Tap a result to start tracking.</div>';
-    return;
-  }
-  box.innerHTML = state.spins.map(s => `
-    <div class="log-item">
-      <div class="row">
-        <div>
-          <div style="font-weight:900">Spin ${s.spin} • L${s.levelBefore}</div>
-          <div class="muted">${s.note}</div>
-        </div>
-        <div style="font-weight:900;color:${s.delta >= 0 ? 'var(--green)' : 'var(--red)'}">${s.delta >= 0 ? '+' : '-'}${fmt(Math.abs(s.delta))}</div>
-      </div>
-      <div style="height:8px"></div>
-      <div class="row muted">
-        <span>Bankroll: ${fmt(s.bankrollAfter)}</span>
-        <span>Streak: ${s.streakAfter}</span>
-        <span>High: ${fmt(s.highAfter)}</span>
-      </div>
-    </div>
-  `).join('');
-}
-
-function getRollingDailySessions(saved){ const now = Date.now(), oneDay = 24*60*60*1000; return saved.filter(s => s.timestamp && (now - s.timestamp <= oneDay)); }
-function getRollingWeeklySessions(saved){ const now = Date.now(), oneWeek = 7*24*60*60*1000; return saved.filter(s => s.timestamp && (now - s.timestamp <= oneWeek)); }
-
-function renderGoals(){
-  const dailyGoal = round2(state.dailyGoal || 0);
-  const dailyTotal = round2(getRollingDailySessions(state.savedSessions).reduce((a,b)=>a+b.profit,0));
-  const dailyLeft = Math.max(0, round2(dailyGoal - dailyTotal));
-  document.getElementById('dailyGoalValue').textContent = fmt(dailyGoal);
-  document.getElementById('dailyTotalValue').textContent = fmt(dailyTotal);
-  document.getElementById('dailyLeft').textContent = dailyLeft === 0 ? 'Goal reached' : fmt(dailyLeft) + ' left';
-  document.getElementById('pDaily').style.width = (dailyGoal > 0 ? Math.max(0, Math.min(100, (dailyTotal / dailyGoal) * 100)) : 0) + '%';
-
-  const weeklyGoal = round2(state.weeklyGoal || 0);
-  const weeklyTotal = round2(getRollingWeeklySessions(state.savedSessions).reduce((a,b)=>a+b.profit,0));
-  const weeklyLeft = Math.max(0, round2(weeklyGoal - weeklyTotal));
-  document.getElementById('weeklyGoalValue').textContent = fmt(weeklyGoal);
-  document.getElementById('weeklyTotalValue').textContent = fmt(weeklyTotal);
-  document.getElementById('weeklyLeft').textContent = weeklyLeft === 0 ? 'Goal reached' : fmt(weeklyLeft) + ' left';
-  document.getElementById('pWeekly').style.width = (weeklyGoal > 0 ? Math.max(0, Math.min(100, (weeklyTotal / weeklyGoal) * 100)) : 0) + '%';
-}
-
-function getSessionPoints(){
-  const points = [{x:0, y:round2(state.startingBankroll || 0)}];
-  state.spins.slice().reverse().forEach((spin, idx)=>points.push({x:idx+1, y:round2(spin.bankrollAfter)}));
-  return points;
-}
-function getGrowthPoints(){ return state.savedSessions.map((s, idx)=>({x:idx+1,y:round2(s.end)})); }
-function getBounds(values, fallback){
-  const arr = values.length ? values : [fallback || 0];
-  const min = Math.floor(Math.min(...arr) - 1);
-  const max = Math.ceil(Math.max(...arr) + 1);
-  return {min, max};
-}
-function sessionChartColors(){
-  const profit = round2(state.bankroll - state.startingBankroll);
-  if(profit > 0) return {line:'#43d17c', fill:'rgba(67,209,124,.18)'};
-  if(profit < 0) return {line:'#ff5b6d', fill:'rgba(255,91,109,.18)'};
-  return {line:'#4990ff', fill:'rgba(73,144,255,.18)'};
-}
-function growthChartColors(){
-  const last = state.savedSessions[state.savedSessions.length - 1];
-  if(!last || last.profit === 0) return {line:'#4990ff', fill:'rgba(73,144,255,.16)'};
-  return last.profit > 0 ? {line:'#43d17c', fill:'rgba(67,209,124,.16)'} : {line:'#ff5b6d', fill:'rgba(255,91,109,.16)'};
-}
-function buildChart(ctx, colors){
-  return new Chart(ctx, {
-    type:'line',
-    data:{datasets:[{data:[], borderColor:colors.line, backgroundColor:colors.fill, borderWidth:3, pointRadius:3, pointHoverRadius:4, tension:.38, fill:true}]},
-    options:{
-      responsive:true,
-      maintainAspectRatio:false,
-      layout:{padding:0},
-      animation:false,
-      plugins:{legend:{display:false}, tooltip:{enabled:true}},
-      scales:{
-        x:{type:'linear', min:0, ticks:{precision:0,color:'#9fb2d4', padding:4}, grid:{color:'rgba(126,154,201,.20)', drawBorder:false}, border:{display:false}},
-        y:{ticks:{color:'#9fb2d4', padding:4, callback:v=>fmt(v)}, grid:{color:'rgba(126,154,201,.20)', drawBorder:false}, border:{display:false}}
-      }
-    }
-  });
-}
-function initCharts(){
-  bankrollChart = buildChart(document.getElementById('bankrollChart').getContext('2d'), sessionChartColors());
-  growthChart = buildChart(document.getElementById('growthChart').getContext('2d'), growthChartColors());
-}
-function updateCharts(){
-  const sColors = sessionChartColors();
-  const sessionPts = getSessionPoints();
-  bankrollChart.data.datasets[0].data = sessionPts;
-  bankrollChart.data.datasets[0].borderColor = sColors.line;
-  bankrollChart.data.datasets[0].backgroundColor = sColors.fill;
-  const sb = getBounds(sessionPts.map(p=>p.y), state.startingBankroll);
-  bankrollChart.options.scales.y.min = sb.min;
-  bankrollChart.options.scales.y.max = sb.max;
-  bankrollChart.update();
-
-  const gColors = growthChartColors();
-  const growthPts = getGrowthPoints();
-  growthChart.data.datasets[0].data = growthPts;
-  growthChart.data.datasets[0].borderColor = gColors.line;
-  growthChart.data.datasets[0].backgroundColor = gColors.fill;
-  const gb = getBounds(growthPts.map(p=>p.y), state.lastExitBankroll || state.bankroll);
-  growthChart.options.scales.y.min = gb.min;
-  growthChart.options.scales.y.max = gb.max;
-  growthChart.update();
-}
-
-function updateUI(){
-  const profit = round2(state.bankroll - state.startingBankroll);
-  document.getElementById('bankroll').textContent = fmt(state.bankroll);
-  document.getElementById('level').textContent = String(state.level);
-  document.getElementById('streakCount').textContent = String(state.streakCount);
-  const streakEl = document.getElementById('streakCount');
-  streakEl.style.color = state.streakCount > 0 ? 'var(--green)' : (state.streakCount < 0 ? 'var(--red)' : 'var(--text)');
-  document.getElementById('sessionHigh').textContent = fmt(state.sessionHigh);
-  document.getElementById('dozenBet').textContent = fmt(3 * state.level * state.baseUnit);
-  document.getElementById('streetBet').textContent = fmt(1 * state.level * state.baseUnit);
-  document.getElementById('totalBet').textContent = fmt(6 * state.level * state.baseUnit);
-
-  const sp = document.getElementById('sessionProfit');
-  sp.textContent = 'Session Profit  ' + fmtSigned(profit);
-  sp.className = 'label ' + (profit >= 0 ? 'value-pos' : 'value-neg');
-  sp.style.fontSize = '16px';
-  sp.style.fontWeight = '800';
-
-  const status = getStatus();
-  const sc = document.getElementById('statusChip');
-  sc.textContent = status.text;
-  sc.className = 'chip ' + (status.cls === 'green' ? 'green' : 'blue') + ' dot';
-
-  document.getElementById('targetMsg').style.display = state.targetLocked ? 'block' : 'none';
-  document.getElementById('unlockPlayBtn').style.display = state.targetLocked ? 'block' : 'none';
-  document.getElementById('recoveryMsg').style.display = state.recoveryMode ? 'block' : 'none';
-  setMainButtonsDisabled(state.targetLocked);
-
-  document.getElementById('startingBankrollInput').value = state.startingBankroll ? state.startingBankroll.toFixed(2) : '';
-  document.getElementById('targetProfitInput').value = state.targetProfit.toFixed(2);
-  document.getElementById('baseUnitInput').value = state.baseUnit.toFixed(2);
-
-  renderSpinLog();
-  renderGoals();
-  updateCharts();
-  saveState();
-}
-
-loadState();
-window.addEventListener('DOMContentLoaded', ()=>{
-  initCharts();
-  updateUI();
-
-  const btn = document.getElementById('overlayStartBtn');
-  const input = document.getElementById('overlayBankrollInput');
-
-  if(btn) btn.addEventListener('click', startSessionFromOverlay);
-  if(input) input.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') startSessionFromOverlay(); });
-
-  if(state.startingBankroll > 0 && state.bankroll > 0){
-    hideStartOverlay();
-  } else {
-    showStartOverlay();
-  }
-});
+function ordinal(n){ return n===1?'1st':n===2?'2nd':'3rd'; }
+function statusMsg(m,danger=false){ status.textContent=m; status.className='notice '+(danger?'danger':''); }
+function resetAll(){ if(confirm('Reset the full session?')){ localStorage.removeItem('ddRecovery'); s=null; openSetup(true); } }
+init();
 </script>
 </body>
 </html>
