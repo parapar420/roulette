@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel del Técnico | Taller Automotriz</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+    }
+    header {
+      background: linear-gradient(135deg,#020617,#111827);
+      padding: 20px;
+      text-align: center;
+      border-bottom: 1px solid #334155;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 26px;
+    }
+    header p {
+      color: #cbd5e1;
+      margin-top: 6px;
+    }
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 16px;
+    }
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,.25);
+    }
+    h2 {
+      margin-top: 0;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media(max-width:800px){
+      .grid { grid-template-columns: 1fr; }
+    }
+    label {
+      display:block;
+      margin-top:12px;
+      font-size:13px;
+      font-weight:bold;
+      color:#cbd5e1;
+    }
+    input, textarea, select {
+      width:100%;
+      padding:11px;
+      margin-top:5px;
+      border-radius:10px;
+      border:1px solid #475569;
+      background:#0f172a;
+      color:white;
+      font-size:15px;
+    }
+    textarea {
+      min-height:90px;
+      resize:vertical;
+    }
+    button {
+      border:none;
+      border-radius:10px;
+      padding:12px 14px;
+      margin-top:14px;
+      cursor:pointer;
+      font-weight:bold;
+      background:#22c55e;
+      color:#020617;
+    }
+    button.secondary { background:#38bdf8; }
+    button.warning { background:#facc15; }
+    .job {
+      background:#0f172a;
+      border:1px solid #334155;
+      border-radius:14px;
+      padding:14px;
+      margin-bottom:12px;
+    }
+    .status {
+      display:inline-block;
+      margin-top:6px;
+      background:#334155;
+      padding:5px 10px;
+      border-radius:999px;
+      font-size:12px;
+    }
+    .note {
+      background:#0f172a;
+      border-left:4px solid #22c55e;
+      padding:10px;
+      border-radius:8px;
+      color:#cbd5e1;
+      font-size:13px;
+      margin-bottom:14px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Panel del Técnico</h1>
+    <p>Diagnóstico, piezas, mano de obra, tiempos y registro interno del taller.</p>
+  </header>
+
+  <div class="container">
+
+    <div class="card">
+      <h2>Entrada del Técnico</h2>
+      <div class="note">
+        Este panel es para que el mecánico registre diagnóstico, piezas, tiempo trabajado y notas internas del vehículo.
+      </div>
+
+      <form id="techForm">
+        <div class="note">
+        El mecánico solo necesita llenar la información técnica del vehículo y reparación.
+      </div>
+
+        <div class="grid">
+          <div>
+            <label>Mecánico Asignado</label>
+            <select id="customer">
+              <option>Michael</option>
+              <option>Andres</option>
+              <option>Otro</option>
+            </select>
+            <input id="otherMechanic" placeholder="Nombre del mecánico" style="display:none; margin-top:8px;">
+          </div>
+
+          <div>
+            <label>Año del Vehículo</label>
+            <select id="vehicleYear" required></select>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div>
+            <label>Marca</label>
+            <select id="vehicleMake" required></select>
+          </div>
+
+          <div>
+            <label>Modelo</label>
+            <select id="vehicleModel" required></select>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div>
+            <label>Sub-línea / Versión</label>
+            <input id="vehicleTrim" placeholder="Ejemplo: LE, XLE, Sport, Limited, EX, Touring">
+          </div>
+
+          <div>
+            <label>Vehículo Completo</label>
+            <input id="vehicle" placeholder="Se llena automático" readonly>
+          </div>
+        </div>
+
+        <label>Diagnóstico</label>
+        <textarea id="diagnosis" placeholder="Explique el problema encontrado, pruebas realizadas, códigos, daños observados, etc."></textarea>
+
+        <label>Piezas Necesarias / Instaladas</label>
+        <textarea id="parts" placeholder="Alternador, bomba de agua, sensores, fluidos, etc."></textarea>
+
+        <label>Trabajo Realizado</label>
+        <textarea id="labor" placeholder="Explique el trabajo realizado en el vehículo."></textarea>
+
+        <div class="note">
+          El mecánico solo debe registrar diagnóstico, piezas y trabajo realizado. El manejo de tiempo y estado de la orden lo administra oficina / operaciones.
+        </div>
+
+        <label>Notas Internas</label>
+        <textarea id="notes" placeholder="Notas solo para el taller."></textarea>
+
+        <button type="submit">Guardar Registro Técnico</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Registros Técnicos Guardados</h2>
+      <div id="jobList"></div>
+    </div>
+
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'mechanicTechInputSystem';
+    let jobs = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+
+    function saveJobs() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(jobs));
+      renderJobs();
+    }
+
+    function now() {
+      return new Date().toLocaleString('es-PR');
+    }
+
+    document.getElementById('techForm').addEventListener('submit', function(e){
+      e.preventDefault();
+
+      const job = {
+        id: Date.now(),
+        createdAt: now(),
+        
+        customer: getMechanicName(),
+        vehicle: value('vehicle'),
+        diagnosis: value('diagnosis'),
+        parts: value('parts'),
+        labor: value('labor'),
+        
+        vehicleYear: value('vehicleYear'),
+        vehicleMake: value('vehicleMake'),
+        vehicleModel: value('vehicleModel'),
+        vehicleTrim: value('vehicleTrim'),
+        notes: value('notes')
+      };
+
+      jobs.unshift(job);
+      this.reset();
+      document.getElementById('otherMechanic').style.display = 'none';
+      clearModelDropdown();
+      updateVehicleFullName();
+      saveJobs();
+    });
+
+    function value(id){
+      return document.getElementById(id).value.trim();
+    }
+
+    function getMechanicName(){
+      const selected = value('customer');
+      if(selected === 'Otro'){
+        return value('otherMechanic') || 'Otro';
+      }
+      return selected;
+    }
+
+    const vehicleData = {
+      "Acura": ["CL", "ILX", "Integra", "Legend", "MDX", "NSX", "RDX", "RL", "RLX", "RSX", "TL", "TLX", "TSX", "ZDX"],
+      "Alfa Romeo": ["4C", "Giulia", "Stelvio", "Tonale"],
+      "Aston Martin": ["DB9", "DB11", "DB12", "DBS", "Rapide", "Vantage", "Vanquish"],
+      "Audi": ["A3", "A4", "A5", "A6", "A7", "A8", "Q3", "Q4 e-tron", "Q5", "Q7", "Q8", "R8", "RS3", "RS5", "RS6", "RS7", "S3", "S4", "S5", "S6", "S7", "S8", "TT", "e-tron"],
+      "Bentley": ["Bentayga", "Continental", "Flying Spur", "Mulsanne"],
+      "BMW": ["Serie 1", "Serie 2", "Serie 3", "Serie 4", "Serie 5", "Serie 6", "Serie 7", "Serie 8", "i3", "i4", "i7", "i8", "iX", "X1", "X2", "X3", "X4", "X5", "X6", "X7", "Z3", "Z4"],
+      "Buick": ["Cascada", "Century", "Enclave", "Encore", "Encore GX", "Envision", "LaCrosse", "LeSabre", "Lucerne", "Park Avenue", "Regal", "Rendezvous", "Verano"],
+      "Cadillac": ["ATS", "CT4", "CT5", "CT6", "CTS", "DTS", "DeVille", "ELR", "Escalade", "SRX", "STS", "XLR", "XT4", "XT5", "XT6", "XTS"],
+      "Chevrolet": ["Avalanche", "Aveo", "Blazer", "Bolt EV", "Bolt EUV", "C/K", "Camaro", "Caprice", "Captiva", "Cavalier", "City Express", "Cobalt", "Colorado", "Corvette", "Cruze", "Equinox", "Express", "HHR", "Impala", "Lumina", "Malibu", "Monte Carlo", "Prizm", "S-10", "Silverado", "Sonic", "Spark", "SSR", "Suburban", "Tahoe", "Trailblazer", "Traverse", "Trax", "Uplander", "Venture", "Volt"],
+      "Chrysler": ["200", "300", "300M", "Aspen", "Concorde", "Crossfire", "Pacifica", "PT Cruiser", "Sebring", "Town & Country", "Voyager"],
+      "Daewoo": ["Lanos", "Leganza", "Nubira"],
+      "Dodge": ["Avenger", "Caliber", "Caravan", "Challenger", "Charger", "Dakota", "Dart", "Durango", "Grand Caravan", "Intrepid", "Journey", "Magnum", "Neon", "Nitro", "Ram", "Stratus", "Viper"],
+      "Fiat": ["124 Spider", "500", "500L", "500X", "Panda", "Punto"],
+      "Ford": ["Bronco", "Bronco Sport", "C-Max", "Contour", "Crown Victoria", "E-Series", "EcoSport", "Edge", "Escape", "Excursion", "Expedition", "Explorer", "F-150", "F-250", "F-350", "F-450", "Fiesta", "Five Hundred", "Flex", "Focus", "Freestar", "Freestyle", "Fusion", "Maverick", "Mustang", "Ranger", "Taurus", "Thunderbird", "Transit", "Transit Connect", "Windstar"],
+      "Genesis": ["G70", "G80", "G90", "GV60", "GV70", "GV80"],
+      "Geo": ["Metro", "Prizm", "Tracker"],
+      "GMC": ["Acadia", "Canyon", "Envoy", "Jimmy", "S-15", "Safari", "Savana", "Sierra", "Sonoma", "Suburban", "Terrain", "Yukon"],
+      "Honda": ["Accord", "Civic", "Clarity", "Crosstour", "CR-V", "CR-Z", "Del Sol", "Element", "Fit", "HR-V", "Insight", "Odyssey", "Passport", "Pilot", "Prelude", "Ridgeline", "S2000"],
+      "Hummer": ["H1", "H2", "H3"],
+      "Hyundai": ["Accent", "Azera", "Elantra", "Entourage", "Equus", "Genesis", "Ioniq", "Ioniq 5", "Ioniq 6", "Kona", "Nexo", "Palisade", "Santa Cruz", "Santa Fe", "Sonata", "Tiburon", "Tucson", "Veloster", "Venue", "Veracruz", "XG350"],
+      "Infiniti": ["EX35", "EX37", "FX35", "FX45", "FX50", "G20", "G35", "G37", "I30", "I35", "JX35", "M35", "M37", "M45", "Q40", "Q45", "Q50", "Q60", "Q70", "QX4", "QX30", "QX50", "QX55", "QX56", "QX60", "QX70", "QX80"],
+      "Isuzu": ["Amigo", "Ascender", "Axiom", "Hombre", "i-280", "i-290", "i-350", "i-370", "Rodeo", "Trooper", "VehiCROSS"],
+      "Jaguar": ["E-Pace", "F-Pace", "F-Type", "I-Pace", "S-Type", "XE", "XF", "XJ", "XK", "X-Type"],
+      "Jeep": ["Cherokee", "Commander", "Compass", "Gladiator", "Grand Cherokee", "Grand Wagoneer", "Liberty", "Patriot", "Renegade", "Wagoneer", "Wrangler"],
+      "Kia": ["Amanti", "Borrego", "Cadenza", "Carnival", "EV6", "Forte", "K5", "K900", "Niro", "Optima", "Rio", "Rondo", "Sedona", "Seltos", "Sephia", "Sorento", "Soul", "Spectra", "Sportage", "Stinger", "Telluride"],
+      "Land Rover": ["Defender", "Discovery", "Discovery Sport", "Freelander", "LR2", "LR3", "LR4", "Range Rover", "Range Rover Evoque", "Range Rover Sport", "Range Rover Velar"],
+      "Lexus": ["CT", "ES", "GS", "GX", "HS", "IS", "LC", "LFA", "LS", "LX", "NX", "RC", "RX", "SC", "UX"],
+      "Lincoln": ["Aviator", "Blackwood", "Continental", "Corsair", "LS", "Mark LT", "MKC", "MKS", "MKT", "MKX", "MKZ", "Nautilus", "Navigator", "Town Car", "Zephyr"],
+      "Lotus": ["Elise", "Emira", "Esprit", "Evora", "Exige"],
+      "Maserati": ["Ghibli", "GranTurismo", "Levante", "Quattroporte"],
+      "Mazda": ["B-Series", "CX-3", "CX-30", "CX-5", "CX-50", "CX-7", "CX-9", "CX-90", "Mazda2", "Mazda3", "Mazda5", "Mazda6", "Millenia", "MPV", "MX-5 Miata", "Protege", "RX-8", "Tribute"],
+      "Mercedes-Benz": ["Clase A", "Clase B", "Clase C", "Clase CL", "Clase CLA", "Clase CLK", "Clase CLS", "Clase E", "Clase G", "Clase GL", "Clase GLA", "Clase GLB", "Clase GLC", "Clase GLE", "Clase GLK", "Clase GLS", "Clase M", "Clase R", "Clase S", "Clase SL", "Clase SLC", "Clase SLK", "AMG GT", "Metris", "Sprinter"],
+      "Mercury": ["Cougar", "Grand Marquis", "Marauder", "Mariner", "Milan", "Montego", "Monterey", "Mountaineer", "Mystique", "Sable", "Tracer", "Villager"],
+      "MINI": ["Clubman", "Cooper", "Cooper Countryman", "Cooper Paceman", "Countryman", "Hardtop", "Paceman", "Roadster"],
+      "Mitsubishi": ["3000GT", "Diamante", "Eclipse", "Eclipse Cross", "Endeavor", "Galant", "Lancer", "Mirage", "Montero", "Montero Sport", "Outlander", "Outlander PHEV", "Outlander Sport", "Raider"],
+      "Nissan": ["200SX", "240SX", "350Z", "370Z", "Altima", "Armada", "Cube", "Frontier", "GT-R", "Juke", "Kicks", "Leaf", "Maxima", "Murano", "NV", "Pathfinder", "Quest", "Rogue", "Rogue Sport", "Sentra", "Titan", "Versa", "Xterra", "Z"],
+      "Oldsmobile": ["Alero", "Aurora", "Bravada", "Cutlass", "Eighty-Eight", "Intrigue", "Silhouette"],
+      "Plymouth": ["Breeze", "Grand Voyager", "Neon", "Prowler", "Voyager"],
+      "Polestar": ["1", "2", "3", "4"],
+      "Pontiac": ["Aztek", "Bonneville", "Firebird", "G3", "G5", "G6", "G8", "Grand Am", "Grand Prix", "GTO", "Montana", "Solstice", "Sunfire", "Torrent", "Trans Sport", "Vibe"],
+      "Porsche": ["718", "911", "Boxster", "Cayenne", "Cayman", "Macan", "Panamera", "Taycan"],
+      "Ram": ["1500", "2500", "3500", "4500", "5500", "Dakota", "ProMaster", "ProMaster City"],
+      "Rivian": ["R1S", "R1T"],
+      "Rolls-Royce": ["Cullinan", "Dawn", "Ghost", "Phantom", "Wraith"],
+      "Saab": ["9-2X", "9-3", "9-4X", "9-5", "9-7X"],
+      "Saturn": ["Aura", "Astra", "Ion", "L-Series", "Outlook", "Relay", "S-Series", "Sky", "Vue"],
+      "Scion": ["FR-S", "iA", "iM", "iQ", "tC", "xA", "xB", "xD"],
+      "Smart": ["fortwo"],
+      "Subaru": ["Ascent", "Baja", "BRZ", "Crosstrek", "Forester", "Impreza", "Legacy", "Outback", "Solterra", "Tribeca", "WRX", "XV Crosstrek"],
+      "Suzuki": ["Aerio", "Equator", "Esteem", "Forenza", "Grand Vitara", "Kizashi", "Reno", "Samurai", "Sidekick", "Swift", "SX4", "Verona", "Vitara", "XL-7"],
+      "Tesla": ["Cybertruck", "Model 3", "Model S", "Model X", "Model Y", "Roadster"],
+      "Toyota": ["4Runner", "86", "Avalon", "bZ4X", "C-HR", "Camry", "Celica", "Corolla", "Corolla Cross", "Crown", "Echo", "FJ Cruiser", "GR Corolla", "GR Supra", "Highlander", "Land Cruiser", "Matrix", "Mirai", "MR2", "Prius", "Prius C", "Prius Prime", "Prius V", "RAV4", "Sequoia", "Sienna", "Solara", "Tacoma", "Tercel", "Tundra", "Venza", "Yaris"],
+      "Volkswagen": ["Arteon", "Atlas", "Atlas Cross Sport", "Beetle", "Cabrio", "CC", "Eos", "EuroVan", "Golf", "Golf R", "GTI", "ID.4", "Jetta", "Passat", "Phaeton", "R32", "Rabbit", "Routan", "Taos", "Tiguan", "Touareg"],
+      "Volvo": ["C30", "C70", "S40", "S60", "S70", "S80", "S90", "V40", "V50", "V60", "V70", "V90", "XC40", "XC60", "XC70", "XC90"],
+      "Otra marca / Manual": ["Otro / Manual"]
+    };
+
+    function setupVehicleDropdowns(){
+      const yearSelect = document.getElementById('vehicleYear');
+      const makeSelect = document.getElementById('vehicleMake');
+      const modelSelect = document.getElementById('vehicleModel');
+
+      clearModelDropdown();
+
+      yearSelect.innerHTML = '<option value="">Seleccione año</option>';
+      const currentYear = new Date().getFullYear() + 1;
+      for(let y = currentYear; y >= 1980; y--){
+        yearSelect.innerHTML += `<option>${y}</option>`;
+      }
+
+      makeSelect.innerHTML = '<option value="">Seleccione marca</option>';
+      Object.keys(vehicleData).sort().forEach(make => {
+        makeSelect.innerHTML += `<option>${make}</option>`;
+      });
+
+      makeSelect.addEventListener('change', updateModelDropdown);
+      document.getElementById('customer').addEventListener('change', toggleOtherMechanic);
+      yearSelect.addEventListener('change', updateVehicleFullName);
+      modelSelect.addEventListener('change', updateVehicleFullName);
+      document.getElementById('vehicleTrim').addEventListener('input', updateVehicleFullName);
+    }
+
+    function clearModelDropdown(){
+      const modelSelect = document.getElementById('vehicleModel');
+      modelSelect.innerHTML = '<option value="">Seleccione marca primero</option>';
+    }
+
+    function toggleOtherMechanic(){
+      const otherInput = document.getElementById('otherMechanic');
+      otherInput.style.display = value('customer') === 'Otro' ? 'block' : 'none';
+      if(value('customer') !== 'Otro') otherInput.value = '';
+    }
+
+    function updateModelDropdown(){
+      const make = value('vehicleMake');
+      const modelSelect = document.getElementById('vehicleModel');
+      modelSelect.innerHTML = '<option value="">Seleccione modelo</option>';
+
+      if(vehicleData[make]){
+        vehicleData[make].forEach(model => {
+          modelSelect.innerHTML += `<option>${model}</option>`;
+        });
+      }
+
+      modelSelect.innerHTML += '<option>Otro / Manual</option>';
+      updateVehicleFullName();
+    }
+
+    function updateVehicleFullName(){
+      const year = value('vehicleYear');
+      const make = value('vehicleMake');
+      const model = value('vehicleModel');
+      const trim = value('vehicleTrim');
+      document.getElementById('vehicle').value = [year, make, model, trim].filter(Boolean).join(' ');
+    }
+
+    function renderJobs(){
+      const list = document.getElementById('jobList');
+      list.innerHTML = '';
+
+      if(jobs.length === 0){
+        list.innerHTML = '<p style="color:#94a3b8;">No hay registros técnicos guardados.</p>';
+        return;
+      }
+
+      jobs.forEach(job => {
+        const div = document.createElement('div');
+        div.className = 'job';
+
+        div.innerHTML = `
+          <strong>Registro Técnico</strong><br><br>
+          <b>Mecánico:</b> ${escapeHtml(job.customer)}<br>
+          <b>Vehículo:</b> ${escapeHtml(job.vehicle)}<br>
+          
+
+          <hr style="border:none;border-top:1px solid #334155;margin:12px 0;">
+
+          <b>Diagnóstico:</b><br>
+          <p>${escapeHtml(job.diagnosis)}</p>
+
+          <b>Piezas:</b><br>
+          <p>${escapeHtml(job.parts)}</p>
+
+          <b>Trabajo Realizado:</b><br>
+          <p>${escapeHtml(job.labor)}</p>
+
+          <b>Notas Internas:</b><br>
+          <p>${escapeHtml(job.notes)}</p>
+
+          <small style="color:#94a3b8;">Registro creado: ${job.createdAt}</small>
+        `;
+
+        list.appendChild(div);
+      });
+    }
+
+    function escapeHtml(text){
+      return String(text || '')
+      .replaceAll('&','&amp;')
+      .replaceAll('<','&lt;')
+      .replaceAll('>','&gt;')
+      .replaceAll('"','&quot;')
+      .replaceAll("'", '&#039;');
+    }
+
+    setupVehicleDropdowns();
+    renderJobs();
+  </script>
+</body>
+</html>
