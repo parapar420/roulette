@@ -1,328 +1,212 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Auto Shop Intake System</title>
-  <style>
-    :root {
-      --bg: #0f172a;
-      --card: #111827;
-      --card2: #1f2937;
-      --text: #f9fafb;
-      --muted: #9ca3af;
-      --accent: #22c55e;
-      --accent2: #f59e0b;
-      --danger: #ef4444;
-      --border: #374151;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: linear-gradient(180deg, #020617, var(--bg));
-      color: var(--text);
-      padding: 16px;
-    }
-    .app { max-width: 1000px; margin: 0 auto; }
-    header {
-      display: flex; justify-content: space-between; align-items: center;
-      gap: 12px; margin-bottom: 16px; flex-wrap: wrap;
-    }
-    h1 { margin: 0; font-size: 26px; }
-    .subtitle { color: var(--muted); margin-top: 4px; font-size: 14px; }
-    .badge {
-      padding: 8px 12px; border: 1px solid var(--border);
-      background: rgba(255,255,255,0.04); border-radius: 999px;
-      color: var(--muted); font-size: 13px;
-    }
-    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-    .card {
-      background: rgba(17,24,39,0.95); border: 1px solid var(--border);
-      border-radius: 18px; padding: 16px; box-shadow: 0 14px 40px rgba(0,0,0,0.25);
-    }
-    .full { grid-column: 1 / -1; }
-    h2 { font-size: 18px; margin: 0 0 14px; }
-    label { display: block; color: var(--muted); font-size: 13px; margin-bottom: 6px; }
-    input, select, textarea {
-      width: 100%; padding: 12px; border: 1px solid var(--border);
-      border-radius: 12px; background: #020617; color: var(--text);
-      outline: none; font-size: 15px; margin-bottom: 12px;
-    }
-    textarea { min-height: 90px; resize: vertical; }
-    input:focus, select:focus, textarea:focus {
-      border-color: var(--accent); box-shadow: 0 0 0 3px rgba(34,197,94,0.15);
-    }
-    .row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-    .row3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-    button {
-      border: none; padding: 12px 14px; border-radius: 12px;
-      font-weight: bold; color: #03130a; background: var(--accent);
-      cursor: pointer; font-size: 15px;
-    }
-    button.secondary { background: var(--card2); color: var(--text); border: 1px solid var(--border); }
-    button.warning { background: var(--accent2); }
-    button.danger { background: var(--danger); color: white; }
-    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
-    .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-top: 10px; }
-    .photo-card { background: #020617; border: 1px solid var(--border); border-radius: 12px; padding: 8px; overflow: hidden; }
-    .photo-card img { width: 100%; height: 100px; object-fit: cover; border-radius: 8px; display: block; }
-    .photo-card small { display: block; color: var(--muted); margin-top: 6px; word-break: break-word; }
-    .saved-list { display: grid; gap: 10px; }
-    .saved-item {
-      border: 1px solid var(--border); background: #020617; border-radius: 12px;
-      padding: 12px; display: flex; justify-content: space-between; gap: 10px; align-items: center;
-    }
-    .saved-item strong { display: block; }
-    .saved-item span { color: var(--muted); font-size: 13px; }
-    .report {
-      display: none; background: white; color: black; padding: 24px;
-      border-radius: 12px; margin-top: 20px;
-    }
-    .report h2, .report h3 { color: black; }
-    .report table { width: 100%; border-collapse: collapse; margin-bottom: 14px; }
-    .report td, .report th { border: 1px solid #ccc; padding: 8px; vertical-align: top; }
-    .report .report-photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    .report .report-photos img { width: 100%; height: 140px; object-fit: cover; border: 1px solid #ccc; }
-    .hint { color: var(--muted); font-size: 13px; line-height: 1.4; }
-    @media (max-width: 760px) {
-      body { padding: 10px; }
-      .grid, .row, .row3 { grid-template-columns: 1fr; }
-      h1 { font-size: 22px; }
-      .card { padding: 14px; border-radius: 16px; }
-      .saved-item { align-items: flex-start; flex-direction: column; }
-      button { width: 100%; }
-      .actions { flex-direction: column; }
-    }
-    @media print {
-      body { background: white; padding: 0; }
-      .app > header, .grid, .no-print { display: none !important; }
-      .report { display: block !important; box-shadow: none; margin: 0; border-radius: 0; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auto Shop Intake System</title>
+<style>
+:root{
+--bg:#0f172a;--card:#111827;--text:#f9fafb;--muted:#9ca3af;
+--accent:#22c55e;--danger:#ef4444;--border:#374151;
+}
+*{box-sizing:border-box}
+body{
+margin:0;font-family:Arial;background:linear-gradient(180deg,#020617,var(--bg));
+color:var(--text);padding:16px;
+}
+.app{max-width:1000px;margin:auto}
+.card{
+background:rgba(17,24,39,.95);
+border:1px solid var(--border);
+border-radius:18px;
+padding:16px;
+margin-bottom:14px;
+}
+h1,h2{margin-top:0}
+.grid{display:grid;gap:14px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+input,textarea,select{
+width:100%;padding:12px;border-radius:12px;
+border:1px solid var(--border);
+background:#020617;color:white;margin-bottom:12px;
+}
+button{
+padding:12px;border:none;border-radius:12px;
+font-weight:bold;cursor:pointer;
+background:var(--accent);
+}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+.photo-grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
+gap:10px;
+}
+.photo-grid img{
+width:100%;
+height:100px;
+object-fit:cover;
+border-radius:10px;
+border:1px solid var(--border);
+}
+@media(max-width:760px){
+.row,.row3{grid-template-columns:1fr}
+.actions{flex-direction:column}
+button{width:100%}
+}
+</style>
 </head>
 <body>
-  <div class="app">
-    <header>
-      <div>
-        <h1>Auto Shop Intake System</h1>
-        <div class="subtitle">Front desk vehicle intake before mechanic inspection</div>
-      </div>
-      <div class="badge" id="jobBadge">New Intake</div>
-    </header>
+<div class="app">
 
-    <div class="grid">
-      <section class="card">
-        <h2>👤 Customer Info</h2>
-        <label>Customer Name</label><input id="customerName" placeholder="Example: Juan Pérez" />
-        <label>Phone</label><input id="customerPhone" placeholder="787-000-0000" />
-        <label>Email</label><input id="customerEmail" placeholder="customer@email.com" />
-        <label>Address</label><textarea id="customerAddress" placeholder="Customer address"></textarea>
-      </section>
+<h1>Auto Shop Intake System</h1>
 
-      <section class="card">
-        <h2>🚗 Vehicle Info</h2>
-        <div class="row3">
-          <div><label>Year</label><input id="year" placeholder="2018" /></div>
-          <div><label>Brand / Make</label><input id="make" placeholder="Toyota" /></div>
-          <div><label>Model</label><input id="model" placeholder="Corolla" /></div>
-        </div>
-        <label>VIN #</label><input id="vin" placeholder="Scan or type VIN" maxlength="17" />
-        <label>Take VIN Photo / Scan Reference</label><input id="vinPhoto" type="file" accept="image/*" capture="environment" />
-        <div class="row">
-          <div><label>License Plate</label><input id="plate" placeholder="ABC-123" /></div>
-          <div><label>Mileage</label><input id="mileage" type="number" placeholder="95000" /></div>
-        </div>
-        <label>Fuel Level</label>
-        <select id="fuel">
-          <option value="">Select fuel level</option><option>Empty</option><option>1/4</option>
-          <option>1/2</option><option>3/4</option><option>Full</option>
-        </select>
-      </section>
+<div class="card">
+<h2>👤 Customer Info</h2>
 
-      <section class="card full">
-        <h2>🛠️ Service Request</h2>
-        <div class="row">
-          <div>
-            <label>Mechanic Assigned</label>
-            <select id="mechanic"><option value="">Select mechanic</option><option>Micheal</option><option>Andres</option><option>Otro</option></select>
-          </div>
-          <div>
-            <label>Priority</label>
-            <select id="priority"><option>Normal</option><option>Urgent</option><option>Waiting for customer approval</option><option>Parts needed</option></select>
-          </div>
-        </div>
-        <label>Customer Complaint / Reason for Visit</label><textarea id="complaint" placeholder="Example: Car makes noise when braking, check engine light on..."></textarea>
-        <label>Manager Intake Comments</label><textarea id="managerComments" placeholder="Extra notes before mechanic receives vehicle"></textarea>
-      </section>
+<label>Customer Name</label>
+<input id="customerName">
 
-      <section class="card full">
-        <h2>📸 Vehicle Condition & Photos</h2>
-        <p class="hint">Take photos before the mechanic gets the car: front, rear, left side, right side, interior, dashboard, mileage, VIN, dents, scratches, tires.</p>
-        <label>Damage / Dents / Scratches Comments</label><textarea id="damageComments" placeholder="Example: Dent on driver door, scratch on rear bumper, cracked tail light..."></textarea>
-        <label>Upload / Take Vehicle Photos</label><input id="photos" type="file" accept="image/*" capture="environment" multiple />
-        <div class="photo-grid" id="photoPreview"></div>
-      </section>
+<label>Phone</label>
+<input id="customerPhone">
 
-      <section class="card full">
-        <h2>✅ Save / Print / Report</h2>
-        <div class="actions">
-          <button onclick="saveIntake()">Save Intake</button>
-          <button class="secondary" onclick="generateReport()">Generate Report</button>
-          <button class="warning" onclick="printReport()">Print / Save PDF</button>
-          <button class="danger" onclick="clearForm()">Clear Form</button>
-        </div>
-        <p class="hint">Use the same Job ID in ALLDATA estimate and QuickBooks invoice.</p>
-      </section>
+<label>Email</label>
+<input id="customerEmail">
+</div>
 
-      <section class="card full">
-        <h2>📁 Saved Intakes</h2>
-        <div class="saved-list" id="savedList"></div>
-      </section>
-    </div>
+<div class="card">
+<h2>🚗 Vehicle Info</h2>
 
-    <section class="report" id="report"></section>
-  </div>
+<div class="row3">
+<div>
+<label>Year</label>
+<input id="year">
+</div>
 
-  <script>
-    let photoData = [];
-    let vinPhotoData = '';
-    let currentJobId = createJobId();
-    document.getElementById('jobBadge').textContent = 'Job ID: ' + currentJobId;
+<div>
+<label>Brand</label>
+<input id="make">
+</div>
 
-    function createJobId() {
-      const now = new Date();
-      const y = now.getFullYear();
-      const m = String(now.getMonth() + 1).padStart(2, '0');
-      const d = String(now.getDate()).padStart(2, '0');
-      const h = String(now.getHours()).padStart(2, '0');
-      const min = String(now.getMinutes()).padStart(2, '0');
-      return `INT-${y}${m}${d}-${h}${min}`;
-    }
-    function getValue(id) { return document.getElementById(id).value.trim(); }
-    document.getElementById('photos').addEventListener('change', async (event) => {
-      const files = Array.from(event.target.files);
-      for (const file of files) {
-        const base64 = await fileToBase64(file);
-        photoData.push({ name: file.name, data: base64, date: new Date().toLocaleString() });
-      }
-      renderPhotos();
-    });
-    document.getElementById('vinPhoto').addEventListener('change', async (event) => {
-      const file = event.target.files[0];
-      if (file) vinPhotoData = await fileToBase64(file);
-    });
-    function fileToBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }
-    function renderPhotos() {
-      const box = document.getElementById('photoPreview');
-      box.innerHTML = '';
-      photoData.forEach((photo, index) => {
-        const div = document.createElement('div');
-        div.className = 'photo-card';
-        div.innerHTML = `<img src="${photo.data}" alt="Vehicle photo ${index + 1}" /><small>Photo ${index + 1}</small><button class="danger" style="margin-top:8px;padding:8px;font-size:12px;" onclick="removePhoto(${index})">Remove</button>`;
-        box.appendChild(div);
-      });
-    }
-    function removePhoto(index) { photoData.splice(index, 1); renderPhotos(); }
-    function collectData() {
-      return {
-        jobId: currentJobId, createdAt: new Date().toLocaleString(),
-        customerName: getValue('customerName'), customerPhone: getValue('customerPhone'),
-        customerEmail: getValue('customerEmail'), customerAddress: getValue('customerAddress'),
-        year: getValue('year'), make: getValue('make'), model: getValue('model'),
-        vin: getValue('vin').toUpperCase(), plate: getValue('plate').toUpperCase(),
-        mileage: getValue('mileage'), fuel: getValue('fuel'), mechanic: getValue('mechanic'),
-        priority: getValue('priority'), complaint: getValue('complaint'),
-        managerComments: getValue('managerComments'), damageComments: getValue('damageComments'),
-        vinPhoto: vinPhotoData, photos: photoData
-      };
-    }
-    function saveIntake() {
-      const data = collectData();
-      if (!data.customerName && !data.vin && !data.plate) {
-        alert('Add at least customer name, VIN, or license plate before saving.');
-        return;
-      }
-      const saved = JSON.parse(localStorage.getItem('shopIntakes') || '[]');
-      const existingIndex = saved.findIndex(item => item.jobId === data.jobId);
-      if (existingIndex >= 0) saved[existingIndex] = data; else saved.unshift(data);
-      localStorage.setItem('shopIntakes', JSON.stringify(saved));
-      renderSaved();
-      alert('Intake saved: ' + data.jobId);
-    }
-    function renderSaved() {
-      const saved = JSON.parse(localStorage.getItem('shopIntakes') || '[]');
-      const list = document.getElementById('savedList');
-      list.innerHTML = '';
-      if (!saved.length) { list.innerHTML = '<p class="hint">No saved intakes yet.</p>'; return; }
-      saved.forEach((item, index) => {
-        const div = document.createElement('div');
-        div.className = 'saved-item';
-        div.innerHTML = `<div><strong>${item.jobId} — ${item.customerName || 'No customer name'}</strong><span>${item.year || ''} ${item.make || ''} ${item.model || ''} | VIN: ${item.vin || 'N/A'} | Plate: ${item.plate || 'N/A'}</span></div><div class="actions"><button class="secondary" onclick="loadIntake(${index})">Open</button><button class="danger" onclick="deleteIntake(${index})">Delete</button></div>`;
-        list.appendChild(div);
-      });
-    }
-    function loadIntake(index) {
-      const saved = JSON.parse(localStorage.getItem('shopIntakes') || '[]');
-      const item = saved[index];
-      if (!item) return;
-      currentJobId = item.jobId;
-      document.getElementById('jobBadge').textContent = 'Job ID: ' + currentJobId;
-      Object.keys(item).forEach(key => {
-        const el = document.getElementById(key);
-        if (el && typeof item[key] === 'string') el.value = item[key];
-      });
-      photoData = item.photos || [];
-      vinPhotoData = item.vinPhoto || '';
-      renderPhotos();
-      generateReport();
-    }
-    function deleteIntake(index) {
-      if (!confirm('Delete this intake?')) return;
-      const saved = JSON.parse(localStorage.getItem('shopIntakes') || '[]');
-      saved.splice(index, 1);
-      localStorage.setItem('shopIntakes', JSON.stringify(saved));
-      renderSaved();
-    }
-    function clearForm() {
-      if (!confirm('Clear the current form? Save first if needed.')) return;
-      document.querySelectorAll('input, textarea, select').forEach(el => {
-        if (el.type === 'file') el.value = ''; else el.value = '';
-      });
-      photoData = []; vinPhotoData = ''; currentJobId = createJobId();
-      document.getElementById('jobBadge').textContent = 'Job ID: ' + currentJobId;
-      renderPhotos();
-      document.getElementById('report').style.display = 'none';
-      document.getElementById('report').innerHTML = '';
-    }
-    function safe(text) {
-      return String(text || '').replace(/[&<>"]/g, char => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;'}[char]));
-    }
-    function generateReport() {
-      const d = collectData();
-      const report = document.getElementById('report');
-      report.style.display = 'block';
-      const photosHtml = d.photos.length ? `<div class="report-photos">${d.photos.map(p => `<img src="${p.data}" />`).join('')}</div>` : '<p>No vehicle photos uploaded.</p>';
-      const vinPhotoHtml = d.vinPhoto ? `<img src="${d.vinPhoto}" style="max-width:260px;border:1px solid #ccc;" />` : 'No VIN photo uploaded.';
-      report.innerHTML = `
-        <h2>Vehicle Intake Report</h2>
-        <p><strong>Job ID:</strong> ${safe(d.jobId)}<br><strong>Date:</strong> ${safe(d.createdAt)}</p>
-        <h3>Customer Info</h3><table><tr><th>Name</th><td>${safe(d.customerName)}</td></tr><tr><th>Phone</th><td>${safe(d.customerPhone)}</td></tr><tr><th>Email</th><td>${safe(d.customerEmail)}</td></tr><tr><th>Address</th><td>${safe(d.customerAddress)}</td></tr></table>
-        <h3>Vehicle Info</h3><table><tr><th>Year / Make / Model</th><td>${safe(d.year)} ${safe(d.make)} ${safe(d.model)}</td></tr><tr><th>VIN</th><td>${safe(d.vin)}</td></tr><tr><th>Plate</th><td>${safe(d.plate)}</td></tr><tr><th>Mileage</th><td>${safe(d.mileage)}</td></tr><tr><th>Fuel Level</th><td>${safe(d.fuel)}</td></tr></table>
-        <h3>Service Request</h3><table><tr><th>Mechanic</th><td>${safe(d.mechanic)}</td></tr><tr><th>Priority</th><td>${safe(d.priority)}</td></tr><tr><th>Customer Complaint</th><td>${safe(d.complaint)}</td></tr><tr><th>Manager Comments</th><td>${safe(d.managerComments)}</td></tr><tr><th>Damage / Dents / Scratches</th><td>${safe(d.damageComments)}</td></tr></table>
-        <h3>VIN Photo</h3><p>${vinPhotoHtml}</p><h3>Vehicle Photos</h3>${photosHtml}
-        <br><br><table><tr><th>Customer Signature</th><td style="height:50px;"></td></tr><tr><th>Manager Signature</th><td style="height:50px;"></td></tr></table>`;
-      report.scrollIntoView({ behavior: 'smooth' });
-    }
-    function printReport() { generateReport(); window.print(); }
-    renderSaved();
-  </script>
+<div>
+<label>Model</label>
+<input id="model">
+</div>
+</div>
+
+<label>Take VIN Photo</label>
+<input id="vinPhoto" type="file" accept="image/*" capture="environment">
+
+<div class="row">
+<div>
+<label>Plate</label>
+<input id="plate">
+</div>
+
+<div>
+<label>Mileage</label>
+<input id="mileage" type="number">
+</div>
+</div>
+
+<label>Fuel Level</label>
+<select id="fuel">
+<option>Empty</option>
+<option>1/4</option>
+<option>1/2</option>
+<option>3/4</option>
+<option>Full</option>
+</select>
+</div>
+
+<div class="card">
+<h2>🛠️ Customer Complaint</h2>
+<textarea id="complaint"></textarea>
+</div>
+
+<div class="card">
+<h2>📸 Damage / Vehicle Photos</h2>
+
+<label>Dents / Damage Comments</label>
+<textarea id="damage"></textarea>
+
+<label>Upload Vehicle Photos</label>
+<input id="photos" type="file" accept="image/*" capture="environment" multiple>
+
+<div class="photo-grid" id="preview"></div>
+</div>
+
+<div class="card">
+<h2>✅ Actions</h2>
+
+<div class="actions">
+<button onclick="saveData()">Save Intake</button>
+<button onclick="window.print()">Print / Save PDF</button>
+<button onclick="clearForm()" style="background:var(--danger);color:white;">Clear</button>
+</div>
+</div>
+
+</div>
+
+<script>
+let photoData=[];
+
+document.getElementById('photos').addEventListener('change', async(e)=>{
+const files=[...e.target.files];
+
+for(const file of files){
+const base64=await toBase64(file);
+photoData.push(base64);
+}
+
+renderPhotos();
+});
+
+function toBase64(file){
+return new Promise((resolve,reject)=>{
+const reader=new FileReader();
+reader.onload=()=>resolve(reader.result);
+reader.onerror=reject;
+reader.readAsDataURL(file);
+});
+}
+
+function renderPhotos(){
+const preview=document.getElementById('preview');
+preview.innerHTML='';
+
+photoData.forEach(photo=>{
+const img=document.createElement('img');
+img.src=photo;
+preview.appendChild(img);
+});
+}
+
+function saveData(){
+const data={
+customerName:document.getElementById('customerName').value,
+customerPhone:document.getElementById('customerPhone').value,
+customerEmail:document.getElementById('customerEmail').value,
+year:document.getElementById('year').value,
+make:document.getElementById('make').value,
+model:document.getElementById('model').value,
+plate:document.getElementById('plate').value,
+mileage:document.getElementById('mileage').value,
+fuel:document.getElementById('fuel').value,
+complaint:document.getElementById('complaint').value,
+damage:document.getElementById('damage').value,
+photos:photoData
+};
+
+localStorage.setItem('autoShopIntake',JSON.stringify(data));
+
+alert('Intake Saved');
+}
+
+function clearForm(){
+location.reload();
+}
+</script>
+
 </body>
 </html>
