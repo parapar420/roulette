@@ -1,212 +1,685 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Auto Shop Intake System</title>
-<style>
-:root{
---bg:#0f172a;--card:#111827;--text:#f9fafb;--muted:#9ca3af;
---accent:#22c55e;--danger:#ef4444;--border:#374151;
-}
-*{box-sizing:border-box}
-body{
-margin:0;font-family:Arial;background:linear-gradient(180deg,#020617,var(--bg));
-color:var(--text);padding:16px;
-}
-.app{max-width:1000px;margin:auto}
-.card{
-background:rgba(17,24,39,.95);
-border:1px solid var(--border);
-border-radius:18px;
-padding:16px;
-margin-bottom:14px;
-}
-h1,h2{margin-top:0}
-.grid{display:grid;gap:14px}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-input,textarea,select{
-width:100%;padding:12px;border-radius:12px;
-border:1px solid var(--border);
-background:#020617;color:white;margin-bottom:12px;
-}
-button{
-padding:12px;border:none;border-radius:12px;
-font-weight:bold;cursor:pointer;
-background:var(--accent);
-}
-.actions{display:flex;gap:10px;flex-wrap:wrap}
-.photo-grid{
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
-gap:10px;
-}
-.photo-grid img{
-width:100%;
-height:100px;
-object-fit:cover;
-border-radius:10px;
-border:1px solid var(--border);
-}
-@media(max-width:760px){
-.row,.row3{grid-template-columns:1fr}
-.actions{flex-direction:column}
-button{width:100%}
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Auto Shop Intake System</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #111827;
+      --card2: #1f2937;
+      --text: #f9fafb;
+      --muted: #9ca3af;
+      --accent: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --border: #374151;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #020617, var(--bg));
+      color: var(--text);
+      padding: 14px;
+    }
+
+    .app {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    header {
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 25px;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 18px;
+    }
+
+    label {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      margin: 0 0 6px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: #020617;
+      color: var(--text);
+      font-size: 16px;
+      margin-bottom: 12px;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(34,197,94,0.18);
+    }
+
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+      background: var(--accent);
+      color: #02130a;
+    }
+
+    button.secondary {
+      background: var(--card2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    button.warning {
+      background: var(--warning);
+      color: #1f1300;
+    }
+
+    button.danger {
+      background: var(--danger);
+      color: white;
+    }
+
+    .badge {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.05);
+      border-radius: 999px;
+      color: var(--muted);
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+
+    .card {
+      background: rgba(17,24,39,0.96);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.22);
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .row3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+      margin-top: 0;
+    }
+
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(115px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .photo-card {
+      border: 1px solid var(--border);
+      background: #020617;
+      border-radius: 12px;
+      padding: 8px;
+    }
+
+    .photo-card img {
+      width: 100%;
+      height: 95px;
+      object-fit: cover;
+      border-radius: 9px;
+      display: block;
+    }
+
+    .photo-card small {
+      display: block;
+      color: var(--muted);
+      margin-top: 6px;
+      font-size: 12px;
+    }
+
+    .saved-item {
+      border: 1px solid var(--border);
+      background: #020617;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+
+    .saved-title {
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .saved-sub {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .report {
+      display: none;
+      background: white;
+      color: black;
+      border-radius: 12px;
+      padding: 22px;
+      margin-top: 14px;
+    }
+
+    .report h2, .report h3 {
+      color: black;
+    }
+
+    .report table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 14px;
+      font-size: 14px;
+    }
+
+    .report th, .report td {
+      border: 1px solid #bbb;
+      padding: 8px;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .report th {
+      width: 32%;
+      background: #f3f4f6;
+    }
+
+    .report-photos {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .report-photos img {
+      width: 100%;
+      height: 135px;
+      object-fit: cover;
+      border: 1px solid #bbb;
+    }
+
+    @media (max-width: 760px) {
+      body { padding: 10px; }
+      h1 { font-size: 22px; }
+      .row, .row3 { grid-template-columns: 1fr; }
+      .actions { flex-direction: column; }
+      button { width: 100%; }
+      .card { padding: 14px; }
+    }
+
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
+
+      header, .card, .no-print {
+        display: none !important;
+      }
+
+      .app {
+        max-width: none;
+      }
+
+      .report {
+        display: block !important;
+        border-radius: 0;
+        margin: 0;
+        padding: 0;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class="app">
+  <div class="app">
+    <header>
+      <div>
+        <h1>Auto Shop Intake System</h1>
+        <div class="hint">Vehicle intake before mechanic receives the car</div>
+      </div>
+      <div class="badge" id="jobBadge">New Intake</div>
+    </header>
 
-<h1>Auto Shop Intake System</h1>
+    <section class="card">
+      <h2>👤 Customer Info</h2>
+      <label>Customer Name</label>
+      <input id="customerName" placeholder="Customer name" />
 
-<div class="card">
-<h2>👤 Customer Info</h2>
+      <label>Phone</label>
+      <input id="customerPhone" placeholder="787-000-0000" />
 
-<label>Customer Name</label>
-<input id="customerName">
+      <label>Email</label>
+      <input id="customerEmail" placeholder="customer@email.com" />
+    </section>
 
-<label>Phone</label>
-<input id="customerPhone">
+    <section class="card">
+      <h2>🚗 Vehicle Info</h2>
 
-<label>Email</label>
-<input id="customerEmail">
-</div>
+      <div class="row3">
+        <div>
+          <label>Year</label>
+          <input id="year" placeholder="2018" />
+        </div>
+        <div>
+          <label>Brand / Make</label>
+          <input id="make" placeholder="Toyota" />
+        </div>
+        <div>
+          <label>Model</label>
+          <input id="model" placeholder="Corolla" />
+        </div>
+      </div>
 
-<div class="card">
-<h2>🚗 Vehicle Info</h2>
+      <label>Take VIN Photo</label>
+      <input id="vinPhoto" type="file" accept="image/*" capture="environment" />
+      <div id="vinPreview" class="photo-grid"></div>
 
-<div class="row3">
-<div>
-<label>Year</label>
-<input id="year">
-</div>
+      <div class="row">
+        <div>
+          <label>License Plate</label>
+          <input id="plate" placeholder="ABC-123" />
+        </div>
+        <div>
+          <label>Mileage</label>
+          <input id="mileage" type="number" placeholder="95000" />
+        </div>
+      </div>
 
-<div>
-<label>Brand</label>
-<input id="make">
-</div>
+      <label>Fuel Level</label>
+      <select id="fuel">
+        <option value="">Select fuel level</option>
+        <option>Empty</option>
+        <option>1/4</option>
+        <option>1/2</option>
+        <option>3/4</option>
+        <option>Full</option>
+      </select>
+    </section>
 
-<div>
-<label>Model</label>
-<input id="model">
-</div>
-</div>
+    <section class="card">
+      <h2>🛠️ Customer Complaint</h2>
+      <textarea id="complaint" placeholder="What is the customer saying is wrong with the vehicle?"></textarea>
+    </section>
 
-<label>Take VIN Photo</label>
-<input id="vinPhoto" type="file" accept="image/*" capture="environment">
+    <section class="card">
+      <h2>📸 Damage / Vehicle Photos</h2>
+      <p class="hint">Take photos before the mechanic touches the vehicle: front, rear, left, right, interior, dashboard, mileage, dents, scratches, tires.</p>
 
-<div class="row">
-<div>
-<label>Plate</label>
-<input id="plate">
-</div>
+      <label>Dents / Damage Comments</label>
+      <textarea id="damage" placeholder="Example: scratch on rear bumper, dent on driver door..."></textarea>
 
-<div>
-<label>Mileage</label>
-<input id="mileage" type="number">
-</div>
-</div>
+      <label>Upload / Take Vehicle Photos</label>
+      <input id="photos" type="file" accept="image/*" capture="environment" multiple />
 
-<label>Fuel Level</label>
-<select id="fuel">
-<option>Empty</option>
-<option>1/4</option>
-<option>1/2</option>
-<option>3/4</option>
-<option>Full</option>
-</select>
-</div>
+      <div class="photo-grid" id="photoPreview"></div>
+    </section>
 
-<div class="card">
-<h2>🛠️ Customer Complaint</h2>
-<textarea id="complaint"></textarea>
-</div>
+    <section class="card">
+      <h2>✅ Actions</h2>
+      <div class="actions">
+        <button onclick="saveIntake()">Save Intake</button>
+        <button class="secondary" onclick="generateReport()">Preview Report</button>
+        <button class="warning" onclick="printReport()">Print / Save PDF</button>
+        <button class="danger" onclick="newIntake()">New / Clear</button>
+      </div>
+      <p class="hint">Use the same Job ID in ALLDATA estimate and QuickBooks invoice.</p>
+    </section>
 
-<div class="card">
-<h2>📸 Damage / Vehicle Photos</h2>
+    <section class="card">
+      <h2>📁 Saved Intakes</h2>
+      <div id="savedList"></div>
+    </section>
 
-<label>Dents / Damage Comments</label>
-<textarea id="damage"></textarea>
+    <section class="report" id="report"></section>
+  </div>
 
-<label>Upload Vehicle Photos</label>
-<input id="photos" type="file" accept="image/*" capture="environment" multiple>
+  <script>
+    let currentJobId = makeJobId();
+    let vinPhotoData = "";
+    let vehiclePhotos = [];
 
-<div class="photo-grid" id="preview"></div>
-</div>
+    const fields = [
+      "customerName", "customerPhone", "customerEmail",
+      "year", "make", "model", "plate", "mileage",
+      "fuel", "complaint", "damage"
+    ];
 
-<div class="card">
-<h2>✅ Actions</h2>
+    document.addEventListener("DOMContentLoaded", function () {
+      document.getElementById("jobBadge").textContent = "Job ID: " + currentJobId;
+      document.getElementById("vinPhoto").addEventListener("change", handleVinPhoto);
+      document.getElementById("photos").addEventListener("change", handleVehiclePhotos);
+      renderSavedList();
+    });
 
-<div class="actions">
-<button onclick="saveData()">Save Intake</button>
-<button onclick="window.print()">Print / Save PDF</button>
-<button onclick="clearForm()" style="background:var(--danger);color:white;">Clear</button>
-</div>
-</div>
+    function makeJobId() {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = String(now.getMonth() + 1).padStart(2, "0");
+      const d = String(now.getDate()).padStart(2, "0");
+      const h = String(now.getHours()).padStart(2, "0");
+      const min = String(now.getMinutes()).padStart(2, "0");
+      return "INT-" + y + m + d + "-" + h + min;
+    }
 
-</div>
+    function getValue(id) {
+      return document.getElementById(id).value.trim();
+    }
 
-<script>
-let photoData=[];
+    function setValue(id, value) {
+      document.getElementById(id).value = value || "";
+    }
 
-document.getElementById('photos').addEventListener('change', async(e)=>{
-const files=[...e.target.files];
+    function fileToBase64(file) {
+      return new Promise(function (resolve, reject) {
+        const reader = new FileReader();
+        reader.onload = function () { resolve(reader.result); };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
 
-for(const file of files){
-const base64=await toBase64(file);
-photoData.push(base64);
-}
+    async function handleVinPhoto(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      vinPhotoData = await fileToBase64(file);
+      renderVinPhoto();
+    }
 
-renderPhotos();
-});
+    async function handleVehiclePhotos(event) {
+      const files = Array.from(event.target.files);
+      for (const file of files) {
+        const data = await fileToBase64(file);
+        vehiclePhotos.push({
+          data: data,
+          name: file.name,
+          date: new Date().toLocaleString()
+        });
+      }
+      renderVehiclePhotos();
+      event.target.value = "";
+    }
 
-function toBase64(file){
-return new Promise((resolve,reject)=>{
-const reader=new FileReader();
-reader.onload=()=>resolve(reader.result);
-reader.onerror=reject;
-reader.readAsDataURL(file);
-});
-}
+    function renderVinPhoto() {
+      const box = document.getElementById("vinPreview");
+      box.innerHTML = "";
+      if (!vinPhotoData) return;
 
-function renderPhotos(){
-const preview=document.getElementById('preview');
-preview.innerHTML='';
+      const div = document.createElement("div");
+      div.className = "photo-card";
+      div.innerHTML =
+        '<img src="' + vinPhotoData + '" alt="VIN photo">' +
+        '<small>VIN Photo</small>' +
+        '<button class="danger" style="margin-top:8px;padding:8px;font-size:12px;" onclick="removeVinPhoto()">Remove</button>';
+      box.appendChild(div);
+    }
 
-photoData.forEach(photo=>{
-const img=document.createElement('img');
-img.src=photo;
-preview.appendChild(img);
-});
-}
+    function removeVinPhoto() {
+      vinPhotoData = "";
+      document.getElementById("vinPhoto").value = "";
+      renderVinPhoto();
+    }
 
-function saveData(){
-const data={
-customerName:document.getElementById('customerName').value,
-customerPhone:document.getElementById('customerPhone').value,
-customerEmail:document.getElementById('customerEmail').value,
-year:document.getElementById('year').value,
-make:document.getElementById('make').value,
-model:document.getElementById('model').value,
-plate:document.getElementById('plate').value,
-mileage:document.getElementById('mileage').value,
-fuel:document.getElementById('fuel').value,
-complaint:document.getElementById('complaint').value,
-damage:document.getElementById('damage').value,
-photos:photoData
-};
+    function renderVehiclePhotos() {
+      const box = document.getElementById("photoPreview");
+      box.innerHTML = "";
 
-localStorage.setItem('autoShopIntake',JSON.stringify(data));
+      vehiclePhotos.forEach(function (photo, index) {
+        const div = document.createElement("div");
+        div.className = "photo-card";
+        div.innerHTML =
+          '<img src="' + photo.data + '" alt="Vehicle photo">' +
+          '<small>Photo ' + (index + 1) + '</small>' +
+          '<button class="danger" style="margin-top:8px;padding:8px;font-size:12px;" onclick="removeVehiclePhoto(' + index + ')">Remove</button>';
+        box.appendChild(div);
+      });
+    }
 
-alert('Intake Saved');
-}
+    function removeVehiclePhoto(index) {
+      vehiclePhotos.splice(index, 1);
+      renderVehiclePhotos();
+    }
 
-function clearForm(){
-location.reload();
-}
-</script>
+    function collectData() {
+      const data = {
+        jobId: currentJobId,
+        createdAt: new Date().toLocaleString(),
+        vinPhoto: vinPhotoData,
+        photos: vehiclePhotos
+      };
 
+      fields.forEach(function (id) {
+        data[id] = getValue(id);
+      });
+
+      data.plate = data.plate.toUpperCase();
+      return data;
+    }
+
+    function saveIntake() {
+      const data = collectData();
+
+      if (!data.customerName && !data.plate) {
+        alert("Add at least customer name or license plate before saving.");
+        return;
+      }
+
+      const saved = JSON.parse(localStorage.getItem("autoShopIntakes") || "[]");
+      const index = saved.findIndex(function (item) {
+        return item.jobId === data.jobId;
+      });
+
+      if (index >= 0) {
+        saved[index] = data;
+      } else {
+        saved.unshift(data);
+      }
+
+      localStorage.setItem("autoShopIntakes", JSON.stringify(saved));
+      renderSavedList();
+      generateReport();
+      alert("Intake saved: " + data.jobId);
+    }
+
+    function renderSavedList() {
+      const saved = JSON.parse(localStorage.getItem("autoShopIntakes") || "[]");
+      const list = document.getElementById("savedList");
+      list.innerHTML = "";
+
+      if (saved.length === 0) {
+        list.innerHTML = '<p class="hint">No saved intakes yet.</p>';
+        return;
+      }
+
+      saved.forEach(function (item, index) {
+        const div = document.createElement("div");
+        div.className = "saved-item";
+        div.innerHTML =
+          '<div class="saved-title">' + escapeHTML(item.jobId) + " — " + escapeHTML(item.customerName || "No customer name") + '</div>' +
+          '<div class="saved-sub">' + escapeHTML((item.year || "") + " " + (item.make || "") + " " + (item.model || "")) +
+          " | Plate: " + escapeHTML(item.plate || "N/A") + '</div>' +
+          '<div class="actions">' +
+          '<button class="secondary" onclick="loadIntake(' + index + ')">Open</button>' +
+          '<button class="danger" onclick="deleteIntake(' + index + ')">Delete</button>' +
+          '</div>';
+        list.appendChild(div);
+      });
+    }
+
+    function loadIntake(index) {
+      const saved = JSON.parse(localStorage.getItem("autoShopIntakes") || "[]");
+      const item = saved[index];
+      if (!item) return;
+
+      currentJobId = item.jobId;
+      document.getElementById("jobBadge").textContent = "Job ID: " + currentJobId;
+
+      fields.forEach(function (id) {
+        setValue(id, item[id]);
+      });
+
+      vinPhotoData = item.vinPhoto || "";
+      vehiclePhotos = item.photos || [];
+
+      renderVinPhoto();
+      renderVehiclePhotos();
+      generateReport();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function deleteIntake(index) {
+      if (!confirm("Delete this saved intake?")) return;
+
+      const saved = JSON.parse(localStorage.getItem("autoShopIntakes") || "[]");
+      saved.splice(index, 1);
+      localStorage.setItem("autoShopIntakes", JSON.stringify(saved));
+      renderSavedList();
+    }
+
+    function newIntake() {
+      if (!confirm("Clear this form and start a new intake?")) return;
+
+      currentJobId = makeJobId();
+      document.getElementById("jobBadge").textContent = "Job ID: " + currentJobId;
+
+      fields.forEach(function (id) {
+        setValue(id, "");
+      });
+
+      document.getElementById("vinPhoto").value = "";
+      document.getElementById("photos").value = "";
+      vinPhotoData = "";
+      vehiclePhotos = [];
+
+      renderVinPhoto();
+      renderVehiclePhotos();
+
+      document.getElementById("report").style.display = "none";
+      document.getElementById("report").innerHTML = "";
+    }
+
+    function generateReport() {
+      const data = collectData();
+      const report = document.getElementById("report");
+      report.style.display = "block";
+
+      const vinHTML = data.vinPhoto
+        ? '<img src="' + data.vinPhoto + '" style="max-width:260px;border:1px solid #bbb;">'
+        : "No VIN photo added.";
+
+      const photosHTML = data.photos && data.photos.length
+        ? '<div class="report-photos">' + data.photos.map(function (p) {
+            return '<img src="' + p.data + '" alt="Vehicle photo">';
+          }).join("") + '</div>'
+        : "No vehicle photos added.";
+
+      report.innerHTML =
+        '<h2>Vehicle Intake Report</h2>' +
+        '<p><strong>Job ID:</strong> ' + escapeHTML(data.jobId) + '<br>' +
+        '<strong>Date:</strong> ' + escapeHTML(data.createdAt) + '</p>' +
+
+        '<h3>Customer Info</h3>' +
+        '<table>' +
+        row("Customer Name", data.customerName) +
+        row("Phone", data.customerPhone) +
+        row("Email", data.customerEmail) +
+        '</table>' +
+
+        '<h3>Vehicle Info</h3>' +
+        '<table>' +
+        row("Year / Make / Model", (data.year || "") + " " + (data.make || "") + " " + (data.model || "")) +
+        row("Plate", data.plate) +
+        row("Mileage", data.mileage) +
+        row("Fuel Level", data.fuel) +
+        '</table>' +
+
+        '<h3>Customer Complaint</h3>' +
+        '<table>' +
+        row("Complaint", data.complaint) +
+        row("Damage / Dents / Scratches", data.damage) +
+        '</table>' +
+
+        '<h3>VIN Photo</h3>' +
+        '<p>' + vinHTML + '</p>' +
+
+        '<h3>Vehicle Photos</h3>' +
+        photosHTML +
+
+        '<br><br>' +
+        '<table>' +
+        '<tr><th>Customer Signature</th><td style="height:50px;"></td></tr>' +
+        '<tr><th>Manager Signature</th><td style="height:50px;"></td></tr>' +
+        '</table>';
+
+      report.scrollIntoView({ behavior: "smooth" });
+    }
+
+    function printReport() {
+      generateReport();
+      setTimeout(function () {
+        window.print();
+      }, 200);
+    }
+
+    function row(label, value) {
+      return '<tr><th>' + escapeHTML(label) + '</th><td>' + escapeHTML(value || "") + '</td></tr>';
+    }
+
+    function escapeHTML(value) {
+      return String(value || "").replace(/[&<>"']/g, function (char) {
+        return {
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#039;"
+        }[char];
+      });
+    }
+  </script>
 </body>
 </html>
