@@ -206,73 +206,6 @@
       padding: 22px;
       margin-top: 14px;
     }
-
-    .report h2, .report h3 {
-      color: black;
-    }
-
-    .report table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 14px;
-      font-size: 14px;
-    }
-
-    .report th, .report td {
-      border: 1px solid #bbb;
-      padding: 8px;
-      vertical-align: top;
-      text-align: left;
-    }
-
-    .report th {
-      width: 32%;
-      background: #f3f4f6;
-    }
-
-    .report-photos {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-    }
-
-    .report-photos img {
-      width: 100%;
-      height: 135px;
-      object-fit: cover;
-      border: 1px solid #bbb;
-    }
-
-    @media (max-width: 760px) {
-      body { padding: 10px; }
-      h1 { font-size: 22px; }
-      .row, .row3 { grid-template-columns: 1fr; }
-      .actions { flex-direction: column; }
-      button { width: 100%; }
-      .card { padding: 14px; }
-    }
-
-    @media print {
-      body {
-        background: white;
-        padding: 0;
-      }
-
-      header, .card, .no-print {
-        display: none !important;
-      }
-
-      .app {
-        max-width: none;
-      }
-
-      .report {
-        display: block !important;
-        border-radius: 0;
-        margin: 0;
-        padding: 0;
-      }
-    }
   </style>
 </head>
 <body>
@@ -287,8 +220,12 @@
 
     <section class="card">
       <h2>👤 Customer Info</h2>
+
       <label>Customer Name</label>
       <input id="customerName" placeholder="Customer name" />
+
+      <label>ID #</label>
+      <input id="customerId" placeholder="Customer ID / License #" />
 
       <label>Phone</label>
       <input id="customerPhone" placeholder="787-000-0000" />
@@ -305,10 +242,12 @@
           <label>Year</label>
           <input id="year" placeholder="2018" />
         </div>
+
         <div>
           <label>Brand / Make</label>
           <input id="make" placeholder="Toyota" />
         </div>
+
         <div>
           <label>Model</label>
           <input id="model" placeholder="Corolla" />
@@ -317,369 +256,37 @@
 
       <label>Take VIN Photo</label>
       <input id="vinPhoto" type="file" accept="image/*" capture="environment" />
-      <div id="vinPreview" class="photo-grid"></div>
 
       <div class="row">
         <div>
           <label>License Plate</label>
           <input id="plate" placeholder="ABC-123" />
         </div>
+
         <div>
           <label>Mileage</label>
           <input id="mileage" type="number" placeholder="95000" />
         </div>
       </div>
-
-      <label>Fuel Level</label>
-      <select id="fuel">
-        <option value="">Select fuel level</option>
-        <option>Empty</option>
-        <option>1/4</option>
-        <option>1/2</option>
-        <option>3/4</option>
-        <option>Full</option>
-      </select>
     </section>
 
-    <section class="card">
-      <h2>🛠️ Customer Complaint</h2>
-      <textarea id="complaint" placeholder="What is the customer saying is wrong with the vehicle?"></textarea>
-    </section>
+    <script>
+      let currentJobId = makeJobId();
 
-    <section class="card">
-      <h2>📸 Damage / Vehicle Photos</h2>
-      <p class="hint">Take photos before the mechanic touches the vehicle: front, rear, left, right, interior, dashboard, mileage, dents, scratches, tires.</p>
-
-      <label>Dents / Damage Comments</label>
-      <textarea id="damage" placeholder="Example: scratch on rear bumper, dent on driver door..."></textarea>
-
-      <label>Upload / Take Vehicle Photos</label>
-      <input id="photos" type="file" accept="image/*" capture="environment" multiple />
-
-      <div class="photo-grid" id="photoPreview"></div>
-    </section>
-
-    <section class="card">
-      <h2>✅ Actions</h2>
-      <div class="actions">
-        <button onclick="saveIntake()">Save Intake</button>
-        <button class="secondary" onclick="generateReport()">Preview Report</button>
-        <button class="warning" onclick="printReport()">Print / Save PDF</button>
-        <button class="danger" onclick="newIntake()">New / Clear</button>
-      </div>
-      <p class="hint">Use the same Job ID in ALLDATA estimate and QuickBooks invoice.</p>
-    </section>
-
-    <section class="card">
-      <h2>📁 Saved Intakes</h2>
-      <div id="savedList"></div>
-    </section>
-
-    <section class="report" id="report"></section>
+      const fields = [
+        "customerName",
+        "customerId",
+        "customerPhone",
+        "customerEmail",
+        "year",
+        "make",
+        "model",
+        "plate",
+        "mileage",
+        "complaint",
+        "damage"
+      ];
+    </script>
   </div>
-
-  <script>
-    let currentJobId = makeJobId();
-    let vinPhotoData = "";
-    let vehiclePhotos = [];
-
-    const fields = [
-      "customerName", "customerPhone", "customerEmail",
-      "year", "make", "model", "plate", "mileage",
-      "fuel", "complaint", "damage"
-    ];
-
-    document.addEventListener("DOMContentLoaded", function () {
-      document.getElementById("jobBadge").textContent = "Job ID: " + currentJobId;
-      document.getElementById("vinPhoto").addEventListener("change", handleVinPhoto);
-      document.getElementById("photos").addEventListener("change", handleVehiclePhotos);
-      renderSavedList();
-    });
-
-    function makeJobId() {
-      const now = new Date();
-      const y = now.getFullYear();
-      const m = String(now.getMonth() + 1).padStart(2, "0");
-      const d = String(now.getDate()).padStart(2, "0");
-      const h = String(now.getHours()).padStart(2, "0");
-      const min = String(now.getMinutes()).padStart(2, "0");
-      return "INT-" + y + m + d + "-" + h + min;
-    }
-
-    function getValue(id) {
-      return document.getElementById(id).value.trim();
-    }
-
-    function setValue(id, value) {
-      document.getElementById(id).value = value || "";
-    }
-
-    function fileToBase64(file) {
-      return new Promise(function (resolve, reject) {
-        const reader = new FileReader();
-        reader.onload = function () { resolve(reader.result); };
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }
-
-    async function handleVinPhoto(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      vinPhotoData = await fileToBase64(file);
-      renderVinPhoto();
-    }
-
-    async function handleVehiclePhotos(event) {
-      const files = Array.from(event.target.files);
-      for (const file of files) {
-        const data = await fileToBase64(file);
-        vehiclePhotos.push({
-          data: data,
-          name: file.name,
-          date: new Date().toLocaleString()
-        });
-      }
-      renderVehiclePhotos();
-      event.target.value = "";
-    }
-
-    function renderVinPhoto() {
-      const box = document.getElementById("vinPreview");
-      box.innerHTML = "";
-      if (!vinPhotoData) return;
-
-      const div = document.createElement("div");
-      div.className = "photo-card";
-      div.innerHTML =
-        '<img src="' + vinPhotoData + '" alt="VIN photo">' +
-        '<small>VIN Photo</small>' +
-        '<button class="danger" style="margin-top:8px;padding:8px;font-size:12px;" onclick="removeVinPhoto()">Remove</button>';
-      box.appendChild(div);
-    }
-
-    function removeVinPhoto() {
-      vinPhotoData = "";
-      document.getElementById("vinPhoto").value = "";
-      renderVinPhoto();
-    }
-
-    function renderVehiclePhotos() {
-      const box = document.getElementById("photoPreview");
-      box.innerHTML = "";
-
-      vehiclePhotos.forEach(function (photo, index) {
-        const div = document.createElement("div");
-        div.className = "photo-card";
-        div.innerHTML =
-          '<img src="' + photo.data + '" alt="Vehicle photo">' +
-          '<small>Photo ' + (index + 1) + '</small>' +
-          '<button class="danger" style="margin-top:8px;padding:8px;font-size:12px;" onclick="removeVehiclePhoto(' + index + ')">Remove</button>';
-        box.appendChild(div);
-      });
-    }
-
-    function removeVehiclePhoto(index) {
-      vehiclePhotos.splice(index, 1);
-      renderVehiclePhotos();
-    }
-
-    function collectData() {
-      const data = {
-        jobId: currentJobId,
-        createdAt: new Date().toLocaleString(),
-        vinPhoto: vinPhotoData,
-        photos: vehiclePhotos
-      };
-
-      fields.forEach(function (id) {
-        data[id] = getValue(id);
-      });
-
-      data.plate = data.plate.toUpperCase();
-      return data;
-    }
-
-    function saveIntake() {
-      const data = collectData();
-
-      if (!data.customerName && !data.plate) {
-        alert("Add at least customer name or license plate before saving.");
-        return;
-      }
-
-      const saved = JSON.parse(localStorage.getItem("autoShopIntakes") || "[]");
-      const index = saved.findIndex(function (item) {
-        return item.jobId === data.jobId;
-      });
-
-      if (index >= 0) {
-        saved[index] = data;
-      } else {
-        saved.unshift(data);
-      }
-
-      localStorage.setItem("autoShopIntakes", JSON.stringify(saved));
-      renderSavedList();
-      generateReport();
-      alert("Intake saved: " + data.jobId);
-    }
-
-    function renderSavedList() {
-      const saved = JSON.parse(localStorage.getItem("autoShopIntakes") || "[]");
-      const list = document.getElementById("savedList");
-      list.innerHTML = "";
-
-      if (saved.length === 0) {
-        list.innerHTML = '<p class="hint">No saved intakes yet.</p>';
-        return;
-      }
-
-      saved.forEach(function (item, index) {
-        const div = document.createElement("div");
-        div.className = "saved-item";
-        div.innerHTML =
-          '<div class="saved-title">' + escapeHTML(item.jobId) + " — " + escapeHTML(item.customerName || "No customer name") + '</div>' +
-          '<div class="saved-sub">' + escapeHTML((item.year || "") + " " + (item.make || "") + " " + (item.model || "")) +
-          " | Plate: " + escapeHTML(item.plate || "N/A") + '</div>' +
-          '<div class="actions">' +
-          '<button class="secondary" onclick="loadIntake(' + index + ')">Open</button>' +
-          '<button class="danger" onclick="deleteIntake(' + index + ')">Delete</button>' +
-          '</div>';
-        list.appendChild(div);
-      });
-    }
-
-    function loadIntake(index) {
-      const saved = JSON.parse(localStorage.getItem("autoShopIntakes") || "[]");
-      const item = saved[index];
-      if (!item) return;
-
-      currentJobId = item.jobId;
-      document.getElementById("jobBadge").textContent = "Job ID: " + currentJobId;
-
-      fields.forEach(function (id) {
-        setValue(id, item[id]);
-      });
-
-      vinPhotoData = item.vinPhoto || "";
-      vehiclePhotos = item.photos || [];
-
-      renderVinPhoto();
-      renderVehiclePhotos();
-      generateReport();
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    function deleteIntake(index) {
-      if (!confirm("Delete this saved intake?")) return;
-
-      const saved = JSON.parse(localStorage.getItem("autoShopIntakes") || "[]");
-      saved.splice(index, 1);
-      localStorage.setItem("autoShopIntakes", JSON.stringify(saved));
-      renderSavedList();
-    }
-
-    function newIntake() {
-      if (!confirm("Clear this form and start a new intake?")) return;
-
-      currentJobId = makeJobId();
-      document.getElementById("jobBadge").textContent = "Job ID: " + currentJobId;
-
-      fields.forEach(function (id) {
-        setValue(id, "");
-      });
-
-      document.getElementById("vinPhoto").value = "";
-      document.getElementById("photos").value = "";
-      vinPhotoData = "";
-      vehiclePhotos = [];
-
-      renderVinPhoto();
-      renderVehiclePhotos();
-
-      document.getElementById("report").style.display = "none";
-      document.getElementById("report").innerHTML = "";
-    }
-
-    function generateReport() {
-      const data = collectData();
-      const report = document.getElementById("report");
-      report.style.display = "block";
-
-      const vinHTML = data.vinPhoto
-        ? '<img src="' + data.vinPhoto + '" style="max-width:260px;border:1px solid #bbb;">'
-        : "No VIN photo added.";
-
-      const photosHTML = data.photos && data.photos.length
-        ? '<div class="report-photos">' + data.photos.map(function (p) {
-            return '<img src="' + p.data + '" alt="Vehicle photo">';
-          }).join("") + '</div>'
-        : "No vehicle photos added.";
-
-      report.innerHTML =
-        '<h2>Vehicle Intake Report</h2>' +
-        '<p><strong>Job ID:</strong> ' + escapeHTML(data.jobId) + '<br>' +
-        '<strong>Date:</strong> ' + escapeHTML(data.createdAt) + '</p>' +
-
-        '<h3>Customer Info</h3>' +
-        '<table>' +
-        row("Customer Name", data.customerName) +
-        row("Phone", data.customerPhone) +
-        row("Email", data.customerEmail) +
-        '</table>' +
-
-        '<h3>Vehicle Info</h3>' +
-        '<table>' +
-        row("Year / Make / Model", (data.year || "") + " " + (data.make || "") + " " + (data.model || "")) +
-        row("Plate", data.plate) +
-        row("Mileage", data.mileage) +
-        row("Fuel Level", data.fuel) +
-        '</table>' +
-
-        '<h3>Customer Complaint</h3>' +
-        '<table>' +
-        row("Complaint", data.complaint) +
-        row("Damage / Dents / Scratches", data.damage) +
-        '</table>' +
-
-        '<h3>VIN Photo</h3>' +
-        '<p>' + vinHTML + '</p>' +
-
-        '<h3>Vehicle Photos</h3>' +
-        photosHTML +
-
-        '<br><br>' +
-        '<table>' +
-        '<tr><th>Customer Signature</th><td style="height:50px;"></td></tr>' +
-        '<tr><th>Manager Signature</th><td style="height:50px;"></td></tr>' +
-        '</table>';
-
-      report.scrollIntoView({ behavior: "smooth" });
-    }
-
-    function printReport() {
-      generateReport();
-      setTimeout(function () {
-        window.print();
-      }, 200);
-    }
-
-    function row(label, value) {
-      return '<tr><th>' + escapeHTML(label) + '</th><td>' + escapeHTML(value || "") + '</td></tr>';
-    }
-
-    function escapeHTML(value) {
-      return String(value || "").replace(/[&<>"']/g, function (char) {
-        return {
-          "&": "&amp;",
-          "<": "&lt;",
-          ">": "&gt;",
-          '"': "&quot;",
-          "'": "&#039;"
-        }[char];
-      });
-    }
-  </script>
 </body>
 </html>
